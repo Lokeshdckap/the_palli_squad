@@ -52,7 +52,7 @@ const approveWaitingForNewSignups = async (req, res) => {
     });
   } catch (err) {
     return res.status(500).json({
-      msg: "Users fetching error",
+      msg: "users fetching error",
     });
   }
 };
