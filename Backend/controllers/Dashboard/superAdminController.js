@@ -47,7 +47,7 @@ const approveWaitingForNewSignups = async (req, res) => {
       },
     });
     return res.status(200).json({
-      msg: "Waiting Approval Users Fetched Successfully",
+      msg: "Waiting Approval Users fetched Successfully",
       users: getSignuplUser,
     });
   } catch (err) {
