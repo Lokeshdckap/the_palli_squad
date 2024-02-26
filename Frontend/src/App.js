@@ -7,6 +7,7 @@ import Login from './Auth/Login/login';
 import EmailVerification from "./Auth/EmailVerification";
 import SuperAdminAccess from "./Auth/SuperAdminAccess";
 import OTP from "./Auth/OTP";
+import Signup from "./Auth/Signup";
 function App() {
   return (
     <div>
@@ -14,6 +15,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<Signup />} />
           <Route path="/EmailVerification" element={<EmailVerification />} />
           <Route path="/SuperAdminAccess" element={<SuperAdminAccess />} />
           <Route path="/OTP" element={<OTP />} />
