@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 // import axios from "axios";
 
-import { Popover } from "antd";
+import { Button, Popover } from "antd";
 
 import { useForm } from "react-hook-form";
 
@@ -27,19 +27,20 @@ const Signup = () => {
   const navigate = useNavigate()
 
   const handleSignup = (data) => {
-    axiosClient
-      .post("/api/auth/register", data)
-      .then(({ res }) => {
-        console.log(res);
-        navigate("/emailverify");
-      })
-      .catch((err) => {
-        const response = err.response;
-        if (response && response?.status === 409) {
-        } else {
-          console.error("Error:", response?.status);
-        }
-      });
+    
+    // axiosClient
+    //   .post("/api/auth/register", data)
+    //   .then(({ res }) => {
+    //     console.log(res);
+    //     navigate("/emailverify");
+    //   })
+    //   .catch((err) => {
+    //     const response = err.response;
+    //     if (response && response?.status === 409) {
+    //     } else {
+    //       console.error("Error:", response?.status);
+    //     }
+    //   });
   };
   return (
     <div>
