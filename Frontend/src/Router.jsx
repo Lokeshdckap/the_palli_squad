@@ -6,9 +6,10 @@ import Signup from "./Auth/Signup";
 import Signin from "./Auth/Signin";
 import Dashboard from "./Dashboard/Dashboard";
 import Error from "./Error/Error";
+import EmailVerification from "./Auth/EmailVerification";
+import { EmailVerificationCheck } from "./Auth/EmailVerificationCheck";
 
 const router = createBrowserRouter([
-  
   {
     path: "/",
     element: <DefaultLayout />,
@@ -21,10 +22,9 @@ const router = createBrowserRouter([
       {
         path: "/dashboard/",
         element: <Dashboard />,
-      }     
+      },
     ],
   },
-
 
   {
     path: "/",
@@ -38,23 +38,32 @@ const router = createBrowserRouter([
         path: "/signup",
         element: <Signup />,
       },
-    //   {
-    //     path: "/forgotpassword",
-    //     element: <ForgotPassword />,
-    //   },
-    //   {
-    //     path: "/changepassword/:uuid/:token",
-    //     element: <ChangePassword />,
-    //   },
-    //   {
-    //     path: "/emailverify",
-    //     element: <EmailVerification />,
-    //   },
-    //   {
-    //     path: "/email-verify/:uuid/:token",
-    //     element: <EmailVerificationCheck />,
-    //   },
-   
+      {
+        path: "/emailverify",
+        element: <EmailVerification />,
+      },
+      {
+        path: "/email-verify/:uuid/:token",
+        element: <EmailVerificationCheck />,
+
+      },
+      //   {
+      //     path: "/forgotpassword",
+      //     element: <ForgotPassword />,
+      //   },
+      //   {
+      //     path: "/changepassword/:uuid/:token",
+      //     element: <ChangePassword />,
+      //   },
+      //   {
+      //     path: "/emailverify",
+      //     element: <EmailVerification />,
+      //   },
+      //   {
+      //     path: "/email-verify/:uuid/:token",
+      //     element: <EmailVerificationCheck />,
+      //   },
+
       // {
       //   path: "/email-verify/:uuid/:token",
       //   element: <SignupContainer />,
@@ -62,12 +71,10 @@ const router = createBrowserRouter([
     ],
   },
 
-  
   {
     path: "*",
     element: <Error />,
   },
-  
 ]);
 
 export default router;

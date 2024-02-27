@@ -2,9 +2,7 @@ import React, { useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 
-// import axios from "axios";
-
-import { Button, Popover } from "antd";
+import { Button, notification, Popover, Space } from 'antd';
 
 import { useForm } from "react-hook-form";
 
@@ -12,6 +10,8 @@ import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 
 import GetPasswordPopover from "../../src/commonComponents/GetPasswordPopover";
 import axiosClient from "../axios-client";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Signup = () => {
   const {
@@ -24,24 +24,41 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setCofirmPassword] = useState(false);
 
-  const navigate = useNavigate()
+
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotificationWithIcon = (type) => {
+    console.log("dfjdsf");
+    api[type]({
+      message: 'Notification Title',
+      description:
+        'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+    });
+  };
+  const navigate = useNavigate();
+
 
   const handleSignup = (data) => {
-    
-    // axiosClient
-    //   .post("/api/auth/register", data)
-    //   .then(({ res }) => {
-    //     console.log(res);
-    //     navigate("/emailverify");
-    //   })
-    //   .catch((err) => {
-    //     const response = err.response;
-    //     if (response && response?.status === 409) {
-    //     } else {
-    //       console.error("Error:", response?.status);
-    //     }
-    //   });
+    console.log(data);
+
+    axiosClient
+      .post("/api/auth/register", data)
+      .then((res) => {
+        console.log(res);
+        navigate("/emailverify");
+      })
+      .catch((err) => {
+        const response = err.response;
+        if (response && response?.status === 400) {
+          // showToastMessage(response.data);
+          openNotificationWithIcon('success')
+        } else {
+          console.error("Error:", response?.status);
+        }
+      });
   };
+
+  
   return (
     <div>
       <div>
@@ -252,11 +269,15 @@ const Signup = () => {
                       Login here
                     </Link>
                   </p>
+                  <Button onClick={() => openNotificationWithIcon('success')}>Success</Button>
+
                 </form>
               </div>
             </div>
           </div>
         </section>
+        <ToastContainer />
+
       </div>
     </div>
   );
