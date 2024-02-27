@@ -47,10 +47,10 @@ const Signup = () => {
         <section className="bg-gray-50 dark:bg-gray-900">
           <div className="flex flex-col items-center justify-center mx-auto md:h-screen lg:py-0">
             <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-              <div className="space-y-1 md:space-y-4 sm:p-8">
-                <h1 className="text-xl mb-2  font-bold leading-tight tracking-tight  md:text-2xl dark:text-white text-red-700">
+              <div className="space-y-0.5 md:space-y-4 sm:p-5 ">
+                <h2 className="text-xl mb-1  font-bold leading-tight tracking-tight  md:text-2xl dark:text-white">
                   Create an account
-                </h1>
+                </h2>
                 <form
                   className="space-y-4 md:space-y-4"
                   onSubmit={handleSubmit(handleSignup)}
@@ -58,7 +58,7 @@ const Signup = () => {
                   <div>
                     <label
                       htmlFor="username"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      className="block mb-1.5 text-sm font-medium text-gray-900 dark:text-white"
                     >
                       Your Username
                     </label>
@@ -71,7 +71,7 @@ const Signup = () => {
                       {...register("username", { required: true })}
                     />
                     {errors.username && (
-                      <span className="text-red-500">
+                      <span className="text-red-500 text-sm">
                         This field is required
                       </span>
                     )}
@@ -79,7 +79,7 @@ const Signup = () => {
                   <div>
                     <label
                       htmlFor="email"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      className="block mb-1.5 text-sm font-medium text-gray-900 dark:text-white"
                     >
                       Your email
                     </label>
@@ -98,15 +98,15 @@ const Signup = () => {
                       })}
                     />
                     {errors.email && (
-                      <span className="text-red-500">
+                      <span className="text-red-500 text-sm">
                         {errors.email.message}
                       </span>
                     )}
                   </div>
-                  <div>
+                  {/* <div>
                     <label
-                      htmlFor="email"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      htmlFor="number"
+                      className="block mb-1.5 text-sm font-medium text-gray-900 dark:text-white"
                     >
                       Your Contact Number
                     </label>
@@ -125,15 +125,15 @@ const Signup = () => {
                       })}
                     />
                     {errors.contact && (
-                      <span className="text-red-500">
+                      <span className="text-red-500 text-sm">
                         {errors.contact.message}
                       </span>
                     )}
-                  </div>
+                  </div> */}
                   <div>
                     <label
                       htmlFor="password"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      className="block mb-1.5 text-sm font-medium text-gray-900 dark:text-white"
                     >
                       Password
                     </label>
@@ -183,7 +183,7 @@ const Signup = () => {
                           )}
                         </p>
                         {errors.password && (
-                          <span className="text-red-500">
+                          <span className="text-red-500 text-sm">
                             {errors.password.message}
                           </span>
                         )}
@@ -194,7 +194,7 @@ const Signup = () => {
                   <div>
                     <label
                       htmlFor="confirm-password"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      className="block mb-1.5 text-sm font-medium text-gray-900 dark:text-white"
                     >
                       Confirm Password
                     </label>
@@ -228,7 +228,7 @@ const Signup = () => {
                       </p>
                     </div>
                     {errors.confirmPassword && (
-                      <span className="text-red-500">
+                      <span className="text-red-500 text-sm">
                         {errors.confirmPassword.message}
                       </span>
                     )}
@@ -237,7 +237,7 @@ const Signup = () => {
                   <button
                     style={{ width: "100%" }}
                     type="submit"
-                    className=" text-gray-900 bg-white border border-gray-300 pt-4 focus:outline-none hover:bg-gray-700  w-[100rem] font-medium rounded-lg text-sm px-5 py-2 me-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 "
+                    className=" text-gray-900 bg-white border border-gray-300 pt-2 focus:outline-none hover:bg-gray-700  w-[100rem] font-medium rounded-lg text-sm px-5 py-2  dark:bg-gray-800 dark:text-white dark:border-gray-600 "
                   >
                     create an account
                   </button>
