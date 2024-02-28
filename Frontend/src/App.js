@@ -9,6 +9,8 @@ import SuperAdminAccess from "./Auth/SuperAdminAccess";
 import OTP from "./Auth/OTP";
 import Signup from "./Auth/Signup";
 import Signin from "./Auth/Signin";
+import UnAuthDevice from "./Auth/UnAuthDevice"
+
 function App() {
   return (
     <div>
@@ -20,6 +22,7 @@ function App() {
           <Route path="/EmailVerification" element={<EmailVerification />} />
           <Route path="/SuperAdminAccess" element={<SuperAdminAccess />} />
           <Route path="/OTP" element={<OTP />} />
+          <Route path="/UnAuthDevice" element={<UnAuthDevice />} />
         </Routes>
       </BrowserRouter>
     </div>
