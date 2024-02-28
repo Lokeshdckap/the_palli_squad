@@ -31,14 +31,14 @@ export default function UnAuthDevice() {
     const handleSubmit = (e) => {
         e.preventDefault();
         let newErrMessage = { ...errMessage }
-        if (formData.email.trim() === '') {
+        if (!formData.email || formData.email.trim() === '') {
             newErrMessage.email = 'Email is required'
         }
         else {
             newErrMessage.email = ''
         }
 
-        if (formData.description.trim() === '') {
+        if (!formData.description || formData.description.trim() === '') {
             newErrMessage.description = 'Description is required'
         }
         else {
