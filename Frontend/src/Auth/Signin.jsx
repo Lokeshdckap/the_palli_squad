@@ -4,6 +4,7 @@ import Button from "../../src/commonComponents/Button";
 import { useForm } from "react-hook-form";
 import superAdmin from "../assets/images/adminAccess.png";
 import image from "../assets/images/OTP.png";
+import { useStateContext } from "../context/ContextProvider";
 
 import axiosClient from "../axios-client";
 
@@ -17,8 +18,10 @@ const Signin = () => {
     formState: { errors },
   } = useForm();
 
+  const { auth, setAuth } = useStateContext();
+
   const [adminAccess, setAdminAccess] = useState(false);
-  const [otps, setOtps] = useState(true);
+  const [otps, setOtps] = useState(false);
 
   const [otp, setOtp] = useState("");
 
@@ -40,19 +43,14 @@ const Signin = () => {
   };
 
   const handleSignin = (data) => {
-    console.log(data);
-
     axiosClient
       .post("/api/auth/login", data)
       .then((res) => {
-        console.log(res);
-        setOtp(true);
+        setOtps(true);
       })
       .catch((err) => {
         const response = err.response;
         if (response && response?.status === 401) {
-          // showToastMessage(response.data);
-          // openNotificationWithIcon('success')
           setAdminAccess(true);
         } else {
           console.error("Error:", response?.status);
@@ -66,7 +64,27 @@ const Signin = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    console.log("Entered OTP:", otp);
+    let payload = {
+      otp: otp,
+    };
+    axiosClient
+      .post("/api/auth/verify-otp", payload)
+      .then((res) => {
+        setAuth({
+          token: res.data.access,
+        });
+        setOtps(false);
+      })
+      .catch((err) => {
+        const response = err.response;
+        if (response && response?.status === 401) {
+          // showToastMessage(response.data);
+          // openNotificationWithIcon('success')
+          setAdminAccess(true);
+        } else {
+          console.error("Error:", response?.status);
+        }
+      });
   };
 
   return (

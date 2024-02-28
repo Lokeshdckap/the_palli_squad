@@ -8,6 +8,10 @@ import Dashboard from "./Dashboard/Dashboard";
 import Error from "./Error/Error";
 import EmailVerification from "./Auth/EmailVerification";
 import { EmailVerificationCheck } from "./Auth/EmailVerificationCheck";
+import { Admin } from "./Admin/Admin";
+import { Users } from "./Users/Users";
+import { Teams } from "./Teams/Teams";
+import { Secrets } from "./Secret/Secrets";
 
 const router = createBrowserRouter([
   {
@@ -20,8 +24,24 @@ const router = createBrowserRouter([
       },
 
       {
-        path: "/dashboard/",
+        path: "/dashboard",
         element: <Dashboard />,
+      },
+      {
+        path: "/admin",
+        element: <Admin />,
+      },
+      {
+        path: "/users",
+        element: <Users />,
+      },
+      {
+        path: "/teams",
+        element: <Teams />,
+      },
+      {
+        path: "/secrets",
+        element: <Secrets />,
       },
     ],
   },

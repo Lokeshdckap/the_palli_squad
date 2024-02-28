@@ -99,21 +99,13 @@ const login = async (req, res) => {
       if (isSame) {
         // Generate a 6-digit OTP
 
-        const otp = otpGenerator.generate(6, {
+        const otp = otpGenerator.generate(4, {
           upperCase: false,
           specialChars: false,
           alphabets: false,
         });
         try {
-          // const accountSid = "ACe2c426537136d37177481a6d31cd112e";
-          // const authToken = "86c2762846545d4826ec4e5595c08f95";
-          // const client = twilio(accountSid, authToken);
-
-          // await client.messages.create({
-          //   body: `Your OTP is ${otp}`,
-          //   messagingServiceSid: "MG4277bb5cd9f214916fe514b92a4a7e47",
-          //   to: `+91${"9363161715"}`,
-          // });
+          await sendEmail(user.email, "OTP Verification", otp);
 
           await OTP.create({
             uuid: uuid.v4(),
