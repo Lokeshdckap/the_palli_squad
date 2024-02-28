@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import unAuthDevice from "../assets/images/unAuthDevice.jpg"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import Angry from './Emojis/Angry'
 
 export default function UnAuthDevice() {
     const [formData, setFormData] = useState({
@@ -16,6 +17,8 @@ export default function UnAuthDevice() {
 
     const handleClick = () => {
         setFormVisible(!formVisible)
+        setErrMessage('')
+        setFormData('')
     }
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -72,7 +75,7 @@ export default function UnAuthDevice() {
                             value={formData.email}
                             onChange={handleChange}
                             className='border pl-2 h-10 w-full rounded-md' />
-                        {errMessage.email && <p className='text-red-500'>{errMessage.email}</p>}
+                        {errMessage.email && <p className='text-red-500'><span><Angry /></span>{errMessage.email}</p>}
                         <textarea
                             placeholder='Description'
                             name='description'
@@ -80,7 +83,7 @@ export default function UnAuthDevice() {
                             onChange={handleChange}
                             className='border pl-2 py-1 w-full h-40 mt-5 rounded-md'>
                         </textarea>
-                        {errMessage.description && <p className='text-red-500'>{errMessage.description}</p>}
+                        {errMessage.description && <p className='text-red-500'><span><Angry /></span>{errMessage.description}</p>}
                         <button type='submit' className='bg-red-500 border h-11 px-7 text-white rounded-md ml-[140px]'>Submit</button>
                     </form>
                 </div>
