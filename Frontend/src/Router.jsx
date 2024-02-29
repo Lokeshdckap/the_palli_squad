@@ -43,6 +43,16 @@ const router = createBrowserRouter([
         path: "/secrets",
         element: <Secrets />,
       },
+      {
+        path: "/admin/existingUsers",
+        element: <Admin />,
+      },
+      {
+        path: "/admin/pendingList",
+        element: <Admin />,
+        
+      },
+      
     ],
   },
 

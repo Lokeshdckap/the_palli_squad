@@ -70,6 +70,7 @@ const Signin = () => {
     axiosClient
       .post("/api/auth/verify-otp", payload)
       .then((res) => {
+          console.log(res);
         setAuth({
           token: res.data.access,
         });

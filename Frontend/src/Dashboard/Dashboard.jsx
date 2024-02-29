@@ -6,7 +6,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 const Dashboard = () => {
   const navigate = useNavigate()
   useEffect(() =>{
-    navigate("/admin")
+    navigate("/secrets")
   },[])
   return (
     <>

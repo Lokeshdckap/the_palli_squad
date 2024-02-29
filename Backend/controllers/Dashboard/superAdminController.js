@@ -5,23 +5,24 @@ const { Op, where } = require("sequelize");
 
 const getAllUsers = async (req, res) => {
   try {
-    const getAllUser = User.findAll({
+    const users = await User.findAll({
       where: {
         [Op.and]: [
-          {
-            role_type: {
-              [Op.not]: 1,
-            },
-          },
+          // {
+          //   role_type: {
+          //     [Op.not]: ,
+          //   },
+          // },
           {
             isApproved: 1,
           },
         ],
       },
     });
+
     return res.status(200).json({
       msg: "Users Fetched Successfully",
-      users: getAllUser,
+      users: users,
     });
   } catch (err) {
     return res.status(500).json({
@@ -32,7 +33,7 @@ const getAllUsers = async (req, res) => {
 
 const approveWaitingForNewSignups = async (req, res) => {
   try {
-    const getSignuplUser = User.findAll({
+    const getSignuplUser = await User.findAll({
       where: {
         [Op.and]: [
           {
@@ -59,7 +60,7 @@ const approveWaitingForNewSignups = async (req, res) => {
 
 const approvalForNewSignups = async (req, res) => {
   try {
-    const user_uuid = req.body.user_uuid;
+    const user_uuid = req.body.key;
 
     const isApprovedStatus = req.body.isApproved;
 
@@ -140,13 +141,22 @@ const approvalWaitingUnAuthorizedDeviceLogin = (req, res) => {
         },
       ],
     });
-    return res.status(200).json({
-      msg: "Users Fetched Successfully",
-      users: getAllUser,
-    });
+
+    // Handling the result as a Promise
+    getAllUser
+      .then((result) => {
+        return res.status(200).json({
+          msg: "Unauthorisation Users Fetched Successfully",
+          users: result,
+        });
+      })
+      .catch((error) => {
+        // Handle errors
+        console.error(error);
+      });
   } catch (err) {
     return res.status(500).json({
-      msg: "Users fetching error",
+      msg: "Unauthorisation Users fetching error",
     });
   }
 };
@@ -213,6 +223,45 @@ const existingUserRemove = async (req, res) => {
   }
 };
 
+const updateUsers = async (req, res) => {
+  try {
+    const user_uuid = req.body.key;
+
+    const username = req.body.username;
+    const email = req.body.email;
+    const role_type = req.body.role_type;
+
+    const userFind = await User.findOne({
+      where: {
+        uuid: user_uuid,
+      },
+    });
+    if (userFind) {
+      await User.update(
+        { role_type: role_type, email: email, username: username },
+        {
+          where: {
+            uuid: userFind.uuid,
+          },
+        }
+      );
+
+      return res.status(200).json({
+        msg: "User details has been successfully updated by super admin",
+      });
+    } else {
+      return res.status(400).json({
+        msg: "User details has been can't updated by super admin",
+      });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      msg: "Ineternal server error",
+      err: err,
+    });
+  }
+};
+
 module.exports = {
   approvalForNewSignups,
   getAllUsers,
@@ -221,4 +270,5 @@ module.exports = {
   approvalWaitingUnAuthorizedDeviceLogin,
   approvalForNewDevice,
   existingUserRemove,
+  updateUsers,
 };

@@ -8,10 +8,12 @@ const StateContext = createContext({
 export const ContextProvider = ({children}) => {
 
     const [auth, _setAuth] = useState(localStorage.getItem('ACCESS_TOKEN'));
-
+    
     const setAuth = (auth) => {
         _setAuth(auth)
         if(auth.token){
+        console.log(auth,"sndlksd");
+
             localStorage.setItem('ACCESS_TOKEN',auth.token);
         }
         else{
