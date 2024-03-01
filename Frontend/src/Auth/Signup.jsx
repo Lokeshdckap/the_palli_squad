@@ -121,33 +121,6 @@ const Signup = () => {
                       </span>
                     )}
                   </div>
-                  {/* <div>
-                    <label
-                      htmlFor="number"
-                      className="block mb-1.5 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Your Contact Number
-                    </label>
-                    <input
-                      type="number"
-                      id="number"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="8189948383"
-                      required=""
-                      {...register("contact", {
-                        required: "Contact number is required",
-                        minLength: {
-                          value: 10,
-                          message: "Contact number must be at least 10 digits",
-                        },
-                      })}
-                    />
-                    {errors.contact && (
-                      <span className="text-red-500 text-sm">
-                        {errors.contact.message}
-                      </span>
-                    )}
-                  </div> */}
                   <div>
                     <label
                       htmlFor="password"
@@ -269,7 +242,6 @@ const Signup = () => {
                       Login here
                     </Link>
                   </p>
-                  <Button onClick={() => openNotificationWithIcon('success')}>Success</Button>
 
                 </form>
               </div>

@@ -7,7 +7,7 @@ import image from "../assets/images/OTP.png";
 
 import axiosClient from "../axios-client";
 
-import OtpInput from "react-otp-input";
+import OtpInput from 'react-otp-input';
 
 const Signin = () => {
   const {
@@ -206,8 +206,8 @@ const Signin = () => {
                 className="m-auto w-96 h-80 py-5"
                 alt="Super Admin"
               />
-              <div>
-                <form onSubmit={handleFormSubmit}>
+              <div className="flex justify-center">
+                <form onSubmit={handleFormSubmit} className="w-72 flex justify-between">
                   <div className="flex space-x-10">
                     <OtpInput
                       value={otp}
@@ -215,22 +215,15 @@ const Signin = () => {
                       onChange={handleOtpChange}
                       numInputs={4}
                       renderSeparator={<span>-</span>}
-                      renderInput={(props) => (
-                        <input
-                          style={{
-                            padding: "20px", // Adjust the padding value as needed
-                            fontSize: "16px", // You can also adjust the font size if necessary
-                            width: "2em", // Adjust the width if you want larger or smaller inputs
-                          }}
-                          {...props}
-                        />
-                      )}
+                      renderInput={(props) => { 
+                        return <input class="otp" {...props} />;
+                      }}
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="bg-red-500 border h-11 px-2 text-white rounded-md ml-1"
+                    className="bg-red-500 border h-10 px-2 text-white rounded-md "
                   >
                     Submit
                   </button>
