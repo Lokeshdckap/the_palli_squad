@@ -69,6 +69,13 @@ const Signin = () => {
     console.log("Entered OTP:", otp);
   };
 
+  // const MyButton = () => {
+  //   const [isClicked, setIsClicked] = useState(false);
+  
+  //   const handleClick = () => {
+  //     setIsClicked(!isClicked);
+  //   };
+
   return (
     <div>
       <div>
@@ -223,7 +230,7 @@ const Signin = () => {
 
                   <button
                     type="submit"
-                    className="bg-red-500 border h-10 px-2 text-white rounded-md "
+                    className="bg-red-600 h-10 px-2 text-white rounded-md"
                   >
                     Submit
                   </button>
@@ -246,3 +253,4 @@ const Signin = () => {
 };
 
 export default Signin;
+

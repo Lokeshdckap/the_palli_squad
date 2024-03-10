@@ -10,3 +10,7 @@
     border: 1px solid grey !important;
     border-radius: 4px !important;
 }
+.otp:hover {
+    width: 2.7em !important;
+    height: 2.7em !important;
+}
