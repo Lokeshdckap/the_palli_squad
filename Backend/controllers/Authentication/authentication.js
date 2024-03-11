@@ -45,7 +45,7 @@ const register = async (req, res) => {
       }).save();
 
       if (setToken) {
-        const link = `${process.env.FRONTEND_BASE_URL}/email-verify/${user.uuid}/${setToken.token}`;
+        const link = `${process.env.FRONTEND_BASE_URL}email-verify/${user.uuid}/${setToken.token}`;
 
         const emailTemplate = fs.readFileSync(
           path.join(__dirname, "../../", "public", "emailTemplates/index.html"),
@@ -86,11 +86,11 @@ const login = async (req, res) => {
       });
     }
 
-    if (user.device_ip != IP.address()) {
-      return res.status(401).json({
-        msg: "unauthorized device logins",
-      });
-    }
+    // if (user.device_ip != IP.address()) {
+    //   return res.status(401).json({
+    //     msg: "unauthorized device logins",
+    //   });
+    // }
 
     //if user email is found, compare password with bcrypt
     if (user && user.password) {

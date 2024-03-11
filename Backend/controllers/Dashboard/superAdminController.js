@@ -2,17 +2,25 @@ const db = require("../../utils/database");
 const User = db.users;
 const Unauthorization = db.unAuthorizedDevice;
 const { Op, where } = require("sequelize");
-
+const uuid = require("uuid");
+const IP = require("ip");
+const crypto = require('crypto');
 const getAllUsers = async (req, res) => {
   try {
+    const findSuperAdmin = await User.findOne({
+      where: {
+        uuid: req.user.id,
+      },
+    });
+
     const users = await User.findAll({
       where: {
         [Op.and]: [
-          // {
-          //   role_type: {
-          //     [Op.not]: ,
-          //   },
-          // },
+          {
+            role_type: {
+              [Op.not]: findSuperAdmin.role_type,
+            },
+          },
           {
             isApproved: 1,
           },
@@ -20,10 +28,25 @@ const getAllUsers = async (req, res) => {
       },
     });
 
-    return res.status(200).json({
-      msg: "Users Fetched Successfully",
-      users: users,
-    });
+    // Encrypt the data
+    const algorithm = 'aes-256-cbc';
+    const key = 'lokesh1234567890'; // Use a secure method to generate a key
+    const iv = crypto.randomBytes(16); // Use a secure method to generate an IV
+
+    const cipher = crypto.createCipheriv(algorithm, key, iv);
+    let encryptedData = cipher.update(JSON.stringify({
+        msg: "Users Fetched Successfully",
+        users: users,
+    }), 'utf-8', 'hex');
+    encryptedData += cipher.final('hex');
+
+    const responseData = {
+        iv: iv.toString('hex'),
+        encryptedData: encryptedData,
+    };
+
+    res.json(responseData);
+    // return res.status(200).type('plain');
   } catch (err) {
     return res.status(500).json({
       msg: "Users fetching error",
@@ -137,7 +160,7 @@ const approvalWaitingUnAuthorizedDeviceLogin = (req, res) => {
       include: [
         {
           model: User,
-          attributes: ["username", "uuid"], // Specify the attributes you want to retrieve from the User model
+          attributes: ["username", "uuid", "email"], // Specify the attributes you want to retrieve from the User model
         },
       ],
     });
@@ -163,7 +186,7 @@ const approvalWaitingUnAuthorizedDeviceLogin = (req, res) => {
 
 const approvalForNewDevice = async (req, res) => {
   try {
-    const user_uuid = req.body.user_uuid;
+    const user_uuid = req.body.key;
 
     const isApprovedStatus = req.body.isApproved;
 

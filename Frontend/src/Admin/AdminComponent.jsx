@@ -4,10 +4,10 @@ import { useParams } from "react-router-dom";
 import { ExistingUsers } from "./ExistingUser.jsx/ExistingUsers";
 import { PendingAuthUser } from "./PendingAuthUsers/PendingAuthUser";
 import axiosClient from "../axios-client";
-
+import { useMyContext } from "../context/AppContext";
 export const AdminComponent = () => {
   const param = useParams();
-  //   console.log;
+
   const [existUserList, setExistUserList] = useState([]);
   const [approvalSignup, setApprovalSignup] = useState([]);
   const [approvalDevice, setApprovalDevice] = useState([]);
@@ -15,8 +15,24 @@ export const AdminComponent = () => {
   useEffect(() => {
     axiosClient
       .get("/api/superAdmin/getAllUsers")
+
       .then((res) => {
-        setExistUserList(res.data.users);
+        console.log(res.data);
+        // const algorithm = "aes-256-cbc";
+        // const key = crypto.randomBytes(32); // Use the same key generated on the server
+        // const iv = Buffer.from(res.data.iv, "hex");
+
+        // const decipher = crypto.createDecipheriv(algorithm, key, iv);
+        // let decryptedData = decipher.update(
+        //   res.data.encryptedData,
+        //   "hex",
+        //   "utf-8"
+        // );
+        // decryptedData += decipher.final("utf-8");
+
+        // console.log(decryptedData);
+
+        // setExistUserList(decodedData.users);
       })
       .catch((err) => {
         console.log(err);
@@ -42,7 +58,7 @@ export const AdminComponent = () => {
       .get("/api/superAdmin/approvalWaitingUnAuthorizedDeviceLogin")
       .then((res) => {
         console.log(res);
-        // setApprovalDevice(res.data.users);
+        setApprovalDevice(res.data.users);
       })
       .catch((err) => {
         console.log(err);

@@ -5,20 +5,18 @@ require("dotenv").config();
 const sendEmail = async (email, subject, html) => {
   try {
     const transporter = nodemailer.createTransport({
-      host: "email-smtp.us-east-1.amazonaws.com",
-      port: 587,
-      secure: false,
-      tls: {
-        ciphers: "TLSv1.2",
-      },
+      host: "smtp.gmail.com",
+      service: "smtp.gmail.com",
+      port: 465,
+      secure: true,
       auth: {
-        user: "AKIARGASIQDT447MXSVT",
-        pass: "BMpUncusQwJ2MDaoqyZ3wUtK102C4zTLVNxOhO74BwL5",
+        user: "lokeshcdckap@gmail.com",
+        pass: "dudnxkzqtjqswagk",
       },
     });
 
     await transporter.sendMail({
-      from: "support@dckap.co",
+      from: "lokeshcdckap@gmail.com",
       to: email,
       subject: subject,
       html: html,

@@ -17,7 +17,8 @@ module.exports = (sequelize, DataTypes) => {
     uuid: DataTypes.UUID,
     user_uuid: DataTypes.UUID,
     device_ip: DataTypes.STRING,
-    justification: DataTypes.STRING
+    justification: DataTypes.STRING,
+    isApproved:DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'unauthorized',

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import TableComponent from "../../commonComponents/TableComponent";
 import PendingTable from "../../commonComponents/PendingTable";
+import DeviceTable from "../../commonComponents/DeviceTable";
 
-export const PendingAuthUser = ({ approvalSignup,approvalDevice }) => {
-  console.log(approvalSignup);
+export const PendingAuthUser = ({ approvalSignup, approvalDevice }) => {
   const [activeTab, setActiveTab] = useState(1);
 
   const toggleTabs = (tabIndex) => {
@@ -14,10 +14,10 @@ export const PendingAuthUser = ({ approvalSignup,approvalDevice }) => {
     <>
       <div className="flex">
         <div
-          className={`border-[1px] w-[100%] border-gray-300 bg-white rounded-lg cursor-pointer ${
-            activeTab === 0 ? "bg-blue-500 text-white" : ""
+          className={`border-[1px] w-[100%] border-gray-300  rounded-lg cursor-pointer ${
+            activeTab === 1 ? "bg-blue-500 text-white" : ""
           }`}
-          onClick={() => toggleTabs(0)}
+          onClick={() => toggleTabs(1)}
         >
           <div className="w-[90%] m-auto py-3">
             <div className="">
@@ -26,23 +26,23 @@ export const PendingAuthUser = ({ approvalSignup,approvalDevice }) => {
           </div>
         </div>
         <div
-          className={`border-[1px] w-[100%] border-gray-300 bg-white rounded-lg cursor-pointer ${
-            activeTab === 1 ? "bg-blue-500 text-white" : ""
+          className={`border-[1px] w-[100%] border-gray-300 rounded-lg cursor-pointer ${
+            activeTab === 0 ? "bg-blue-500 text-white" : ""
           }`}
-          onClick={() => toggleTabs(1)}
+          onClick={() => toggleTabs(0)}
         >
           <div className="w-[90%] m-auto py-3">
             <div className="text-center">
-              <p>Approval For Unauthorised Device Login</p>
+              <p>Approval For Unauthorized Device Login</p>{" "}
             </div>
           </div>
         </div>
       </div>
 
-      {activeTab === 0 ? (
+      {activeTab === 1 ? (
         <PendingTable existUserList={approvalSignup} />
       ) : (
-        activeTab === 1 && <PendingTable existUserList={approvalDevice} />
+        <DeviceTable approvalDevice={approvalDevice} />
       )}
     </>
   );
