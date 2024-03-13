@@ -207,12 +207,15 @@ const verify_otp = async (req, res) => {
     },
   });
 
+
+  
+
   const findUser = await User.findOne({
     where: {
       uuid: userOtp.user_uuid,
     },
   });
-
+  
   if (userOtp && findUser) {
     if (findUser.isVerified && findUser.isApproved) {
       let access_token = generateAuthToken(findUser);
@@ -224,6 +227,8 @@ const verify_otp = async (req, res) => {
       return res.status(401).json({
         msg: "Please a contact a super admin",
       });
+
+
     }
   } else {
     return res.status(401).json({

@@ -3,7 +3,7 @@
 const { Sequelize, DataTypes } = require("sequelize");
 
 const sequelize = new Sequelize(
-  `postgres://dckap:admin@localhost:5432/secret_manager`,
+  `postgres://postgres:welcome@localhost:5432/secret_manager`,
   { dialect: "postgres" }
 ); // Local
 

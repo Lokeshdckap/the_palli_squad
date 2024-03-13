@@ -4,11 +4,10 @@ import Button from "../../src/commonComponents/Button";
 import { useForm } from "react-hook-form";
 import superAdmin from "../assets/images/adminAccess.png";
 import image from "../assets/images/OTP.png";
-import { useStateContext } from "../context/ContextProvider";
 
 import axiosClient from "../axios-client";
 
-import OtpInput from "react-otp-input";
+import OtpInput from 'react-otp-input';
 
 const Signin = () => {
   const {
@@ -18,10 +17,8 @@ const Signin = () => {
     formState: { errors },
   } = useForm();
 
-  const { auth, setAuth } = useStateContext();
-
   const [adminAccess, setAdminAccess] = useState(false);
-  const [otps, setOtps] = useState(false);
+  const [otps, setOtps] = useState(true);
 
   const [otp, setOtp] = useState("");
 
@@ -43,14 +40,19 @@ const Signin = () => {
   };
 
   const handleSignin = (data) => {
+    console.log(data);
+
     axiosClient
       .post("/api/auth/login", data)
       .then((res) => {
-        setOtps(true);
+        console.log(res);
+        setOtp(true);
       })
       .catch((err) => {
         const response = err.response;
         if (response && response?.status === 401) {
+          // showToastMessage(response.data);
+          // openNotificationWithIcon('success')
           setAdminAccess(true);
         } else {
           console.error("Error:", response?.status);
@@ -64,29 +66,15 @@ const Signin = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    let payload = {
-      otp: otp,
-    };
-    axiosClient
-      .post("/api/auth/verify-otp", payload)
-      .then((res) => {
-          console.log(res);
-        setAuth({
-          token: res.data.access,
-        });
-        setOtps(false);
-      })
-      .catch((err) => {
-        const response = err.response;
-        if (response && response?.status === 401) {
-          // showToastMessage(response.data);
-          // openNotificationWithIcon('success')
-          setAdminAccess(true);
-        } else {
-          console.error("Error:", response?.status);
-        }
-      });
+    console.log("Entered OTP:", otp);
   };
+
+  // const MyButton = () => {
+  //   const [isClicked, setIsClicked] = useState(false);
+  
+  //   const handleClick = () => {
+  //     setIsClicked(!isClicked);
+  //   };
 
   return (
     <div>
@@ -225,8 +213,8 @@ const Signin = () => {
                 className="m-auto w-96 h-80 py-5"
                 alt="Super Admin"
               />
-              <div>
-                <form onSubmit={handleFormSubmit}>
+              <div className="flex justify-center">
+                <form onSubmit={handleFormSubmit} className="w-72 flex justify-between">
                   <div className="flex space-x-10">
                     <OtpInput
                       value={otp}
@@ -234,22 +222,15 @@ const Signin = () => {
                       onChange={handleOtpChange}
                       numInputs={4}
                       renderSeparator={<span>-</span>}
-                      renderInput={(props) => (
-                        <input
-                          style={{
-                            padding: "20px", // Adjust the padding value as needed
-                            fontSize: "16px", // You can also adjust the font size if necessary
-                            width: "2em", // Adjust the width if you want larger or smaller inputs
-                          }}
-                          {...props}
-                        />
-                      )}
+                      renderInput={(props) => { 
+                        return <input class="otp" {...props} />;
+                      }}
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="bg-red-500 border h-11 px-2 text-white rounded-md ml-1"
+                    className="bg-red-600 h-10 px-2 text-white rounded-md"
                   >
                     Submit
                   </button>
