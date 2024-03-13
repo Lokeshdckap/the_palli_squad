@@ -7,7 +7,6 @@ const GetPasswordPopover = (props) => {
 
   const requirementsList = trackPwdRequirement(password);
 
-
   return (
     <ul>
       {requirementsList.map((item) => (
