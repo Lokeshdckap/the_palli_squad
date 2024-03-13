@@ -34,9 +34,13 @@ const authRoute = require("./routes/authentication");
 
 const superAdminRoute = require("./routes/superAdmin");
 
+const userRoute = require("./routes/userInfo");
+
 app.use(`${apiBasePath}/auth`, authRoute);
 
 app.use(`${apiBasePath}/superAdmin`, superAdminRoute);
+
+app.use(`${apiBasePath}/user`, userRoute);
 
 app.set("views", path.join(__dirname, "views"));
 

@@ -2,15 +2,23 @@ const db = require("../../utils/database");
 const User = db.users;
 const Unauthorization = db.unAuthorizedDevice;
 const { Op, where } = require("sequelize");
-
+const uuid = require("uuid");
+const IP = require("ip");
+const crypto = require('crypto');
 const getAllUsers = async (req, res) => {
   try {
-    const getAllUser = User.findAll({
+    const findSuperAdmin = await User.findOne({
+      where: {
+        uuid: req.user.id,
+      },
+    });
+
+    const users = await User.findAll({
       where: {
         [Op.and]: [
           {
             role_type: {
-              [Op.not]: 1,
+              [Op.not]: findSuperAdmin.role_type,
             },
           },
           {
@@ -19,10 +27,26 @@ const getAllUsers = async (req, res) => {
         ],
       },
     });
-    return res.status(200).json({
-      msg: "Users Fetched Successfully",
-      users: getAllUser,
-    });
+
+    // Encrypt the data
+    const algorithm = 'aes-256-cbc';
+    const key = 'lokesh1234567890'; // Use a secure method to generate a key
+    const iv = crypto.randomBytes(16); // Use a secure method to generate an IV
+
+    const cipher = crypto.createCipheriv(algorithm, key, iv);
+    let encryptedData = cipher.update(JSON.stringify({
+        msg: "Users Fetched Successfully",
+        users: users,
+    }), 'utf-8', 'hex');
+    encryptedData += cipher.final('hex');
+
+    const responseData = {
+        iv: iv.toString('hex'),
+        encryptedData: encryptedData,
+    };
+
+    res.json(responseData);
+    // return res.status(200).type('plain');
   } catch (err) {
     return res.status(500).json({
       msg: "Users fetching error",
@@ -32,7 +56,7 @@ const getAllUsers = async (req, res) => {
 
 const approveWaitingForNewSignups = async (req, res) => {
   try {
-    const getSignuplUser = User.findAll({
+    const getSignuplUser = await User.findAll({
       where: {
         [Op.and]: [
           {
@@ -59,7 +83,7 @@ const approveWaitingForNewSignups = async (req, res) => {
 
 const approvalForNewSignups = async (req, res) => {
   try {
-    const user_uuid = req.body.user_uuid;
+    const user_uuid = req.body.key;
 
     const isApprovedStatus = req.body.isApproved;
 
@@ -136,24 +160,33 @@ const approvalWaitingUnAuthorizedDeviceLogin = (req, res) => {
       include: [
         {
           model: User,
-          attributes: ["username", "uuid"], // Specify the attributes you want to retrieve from the User model
+          attributes: ["username", "uuid", "email"], // Specify the attributes you want to retrieve from the User model
         },
       ],
     });
-    return res.status(200).json({
-      msg: "Users Fetched Successfully",
-      users: getAllUser,
-    });
+
+    // Handling the result as a Promise
+    getAllUser
+      .then((result) => {
+        return res.status(200).json({
+          msg: "Unauthorisation Users Fetched Successfully",
+          users: result,
+        });
+      })
+      .catch((error) => {
+        // Handle errors
+        console.error(error);
+      });
   } catch (err) {
     return res.status(500).json({
-      msg: "Users fetching error",
+      msg: "Unauthorisation Users fetching error",
     });
   }
 };
 
 const approvalForNewDevice = async (req, res) => {
   try {
-    const user_uuid = req.body.user_uuid;
+    const user_uuid = req.body.key;
 
     const isApprovedStatus = req.body.isApproved;
 
@@ -213,6 +246,45 @@ const existingUserRemove = async (req, res) => {
   }
 };
 
+const updateUsers = async (req, res) => {
+  try {
+    const user_uuid = req.body.key;
+
+    const username = req.body.username;
+    const email = req.body.email;
+    const role_type = req.body.role_type;
+
+    const userFind = await User.findOne({
+      where: {
+        uuid: user_uuid,
+      },
+    });
+    if (userFind) {
+      await User.update(
+        { role_type: role_type, email: email, username: username },
+        {
+          where: {
+            uuid: userFind.uuid,
+          },
+        }
+      );
+
+      return res.status(200).json({
+        msg: "User details has been successfully updated by super admin",
+      });
+    } else {
+      return res.status(400).json({
+        msg: "User details has been can't updated by super admin",
+      });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      msg: "Ineternal server error",
+      err: err,
+    });
+  }
+};
+
 module.exports = {
   approvalForNewSignups,
   getAllUsers,
@@ -221,4 +293,5 @@ module.exports = {
   approvalWaitingUnAuthorizedDeviceLogin,
   approvalForNewDevice,
   existingUserRemove,
+  updateUsers,
 };

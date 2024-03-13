@@ -28,7 +28,7 @@ module.exports = {
       },
       mobile_no: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       avatar: {
         type: Sequelize.STRING,

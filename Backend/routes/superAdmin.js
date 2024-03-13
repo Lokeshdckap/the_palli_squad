@@ -49,4 +49,8 @@ router.put(
   superAdminController.approvalForNewDevice
 );
 
+router.put("/updateUsers",
+verifyAuthAdminMiddleware.verifyTokenAdmin,
+superAdminController.updateUsers
+)
 module.exports = router;
