@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 
 import EmailVerification from "./Auth/EmailVerification";
 import SuperAdminAccess from "./Auth/SuperAdminAccess";
-import OTP from "./Auth/OTP";
 import Signup from "./Auth/Signup";
 import Signin from "./Auth/Signin";
 import UnAuthDevice from "./Auth/UnAuthDevice"
