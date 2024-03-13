@@ -48,7 +48,7 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use("/uploads", express.static("uploads"));
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () =>
   console.log(`Serpassportver running server on port ${PORT}`)

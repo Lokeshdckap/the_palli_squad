@@ -1,7 +1,8 @@
 import React from "react";
 import TableComponent from "../../commonComponents/TableComponent";
+// import TeamPopup from "../../Teams/TeamPopup";
 
-export const ExistingUsers = ({existUserList}) => {
+const ExistingUsers = ({existUserList}) => {
     
   return (
     <div>
@@ -11,3 +12,15 @@ export const ExistingUsers = ({existUserList}) => {
     </div>
   );
 };
+export default ExistingUsers;
+
+
+// const popupTeam = () => {
+//   return (
+//     <div>
+//       <TeamPopup />
+//     </div>
+//   );
+// }
+
+// export default popupTeam;
