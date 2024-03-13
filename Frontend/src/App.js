@@ -4,6 +4,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 // import Login from './Auth/Login/login';
 // import LoginInputs from './Auth/Login/loginInput';
 
+import EmailVerification from "./Auth/EmailVerification";
+import SuperAdminAccess from "./Auth/SuperAdminAccess";
+import OTP from "./Auth/OTP";
+import Signup from "./Auth/Signup";
+import Signin from "./Auth/Signin";
+import UnAuthDevice from "./Auth/UnAuthDevice"
 
 function App() {
   return (
@@ -16,6 +22,7 @@ function App() {
           <Route path="/EmailVerification" element={<EmailVerification />} />
           <Route path="/SuperAdminAccess" element={<SuperAdminAccess />} />
           <Route path="/OTP" element={<OTP />} />
+          <Route path="/UnAuthDevice" element={<UnAuthDevice />} />
         </Routes>
       </BrowserRouter> */}
     </div>

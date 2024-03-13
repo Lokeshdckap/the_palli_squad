@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Smiley() {
+export default function Angry() {
     return (
         <>
             <span className='pr-2'>😠</span>
