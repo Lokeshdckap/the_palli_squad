@@ -1,24 +1,62 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Header } from "../Header/Header";
 import { PopupInput } from "./TeamPopupInput";
 import { PopupButton } from "./TeamPopupButton";
+import axios from "axios";
 
 const TeamsComponent = (props) => {
-  const testArray = [15];
+  const [teamList,setTeamList] = useState([
+  
+  {
+      team_name:"palli",
+      created_at:"2024/03/12",
+      updated_at:"2024/03/12",
+      team_count:5
+    }
 
-  if (testArray.length > 0) {
+  ]);
+
+
+  useEffect(()=>{
+    axios.get("",{"token": "token here"}).then((res)=>{
+      
+    }).catch((error)=>{
+      console.log(error)
+    })
+
+  },[])
+
     return (
       <div>
-        <Header />
+        {teamList.length ? (
         <div>
-        Teams
+          <Header />
+
+          <table>
+            <tr>
+              <th>Id</th>
+              <th>Team Name</th>
+              <th>Created</th>
+              <th>Updated</th>
+              <th>Team Member Count</th>
+            </tr>
+            <tr>
+              {teamList.map((team)=>{
+                return (
+                 <>
+                   <td>{team.team_name}</td>
+                  <td>{team.created_at}</td>
+                  <td>{team.updated_at}</td>
+                  <td>{team.team_count}</td>
+                 </>
+                )
+              })}
+            </tr>
+          </table>
         </div>
-      </div>
-    );
-  } else {
-    return (
-      <div>
-        <div>
+          
+        ) : (
+          <div>
           <div className="bg-[#aba9af] opacity-[0.5] w-[100%] h-[100%] absolute top-0 left-0  z-10"></div>
           <div className=" flex items-center justify-center h-screen w-screen absolute top-2/4 left-2/4 transform -translate-x-1/2 -translate-y-1/2 z-20 ">
             <div className="bg-[#fff] h-[320px] w-[600px]  rounded-lg -z-10">
@@ -57,8 +95,10 @@ const TeamsComponent = (props) => {
             </div>
           </div>
         </div>
+        )}
+        
       </div>
     );
-  }
+
 };
 export default TeamsComponent;
