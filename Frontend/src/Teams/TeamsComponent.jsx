@@ -3,6 +3,7 @@ import { Header } from "../Header/Header";
 import { PopupInput } from "./TeamPopupInput";
 import { PopupButton } from "./TeamPopupButton";
 import axios from "axios";
+import TeamTableComponent from "../commonComponents/TeamTableComponent"
 
 const TeamsComponent = (props) => {
   const [teamList,setTeamList] = useState([
@@ -11,7 +12,8 @@ const TeamsComponent = (props) => {
       team_name:"palli",
       created_at:"2024/03/12",
       updated_at:"2024/03/12",
-      team_count:5
+      team_count:13,
+      id:1,
     }
 
   ]);
@@ -31,28 +33,8 @@ const TeamsComponent = (props) => {
         {teamList.length ? (
         <div>
           <Header />
-
-          <table>
-            <tr>
-              <th>Id</th>
-              <th>Team Name</th>
-              <th>Created</th>
-              <th>Updated</th>
-              <th>Team Member Count</th>
-            </tr>
-            <tr>
-              {teamList.map((team)=>{
-                return (
-                 <>
-                   <td>{team.team_name}</td>
-                  <td>{team.created_at}</td>
-                  <td>{team.updated_at}</td>
-                  <td>{team.team_count}</td>
-                 </>
-                )
-              })}
-            </tr>
-          </table>
+          <TeamTableComponent data={teamList}/>
+         
         </div>
           
         ) : (
