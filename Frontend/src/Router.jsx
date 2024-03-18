@@ -8,6 +8,7 @@ import Dashboard from "./Dashboard/Dashboard";
 import Error from "./Error/Error";
 import EmailVerification from "./Auth/EmailVerification";
 import { EmailVerificationCheck } from "./Auth/EmailVerificationCheck";
+import StoreSecrets from "./Auth/StoreSecrets";
 import { Admin } from "./Admin/Admin";
 import { Users } from "./Users/Users";
 import { Teams } from "./Teams/Teams";
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
         element: <Admin />,
         
       },
+      {
+        path:"/storeSecrets",
+        element:<StoreSecrets/>
+      }
       
     ],
   },
