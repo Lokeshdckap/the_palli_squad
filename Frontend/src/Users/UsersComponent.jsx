@@ -48,7 +48,7 @@ export const UsersComponent = ({ closeTab, setCloseTab, handleOpenClose }) => {
             </div>
             <img src={invitePeople} className="m-auto w-auto h-[75%] py-5" />
             <form onSubmit={handleInviteUsers} className="mx-auto">
-              <label className="pl-2 pr-2 text-[16px]">Email</label>
+              <label className="pl-16 pr-3 text-[16px]">Email</label>
               <input
                 placeholder="Email"
                 type="email"
