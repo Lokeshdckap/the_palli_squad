@@ -45,7 +45,7 @@ export const AdminComponent = () => {
     axiosClient
       .get("/api/superAdmin/approveWaitingForNewSignups")
       .then((res) => {
-        console.log(res.data.users);
+        // console.log(res.data.users);
         setApprovalSignup(res.data.users);
       })
       .catch((err) => {

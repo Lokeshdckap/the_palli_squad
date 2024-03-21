@@ -1,8 +1,4 @@
-// import logo from './logo.svg';
-// import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-// import Login from './Auth/Login/login';
-// import LoginInputs from './Auth/Login/loginInput';
 
 import EmailVerification from "./Auth/EmailVerification";
 import SuperAdminAccess from "./Auth/SuperAdminAccess";

@@ -6,31 +6,35 @@ import axios from "axios";
 import TeamTableComponent from "../commonComponents/TeamTableComponent"
 
 const TeamsComponent = (props) => {
-  const [teamList,setTeamList] = useState([
-  
-  {
-      team_name:"palli",
-      created_at:"2024/03/12",
-      updated_at:"2024/03/12",
-      team_count:13,
-      id:1,
-    }
-
-  ]);
+  const [teamList,setTeamList] = useState();
+  const [teampop,setTeampop] = useState(false);
 
 
-  useEffect(()=>{
-    axios.get("",{"token": "token here"}).then((res)=>{
+  const useEffect = async(e)=>{
+    setTeampop(true);
+    await axios
+    .get("/api/teams/getAllTeam",{"token": "token here"})
+    .then((res)=>{
+      console.log(res);
       
-    }).catch((error)=>{
+      setTeampop(false);
+      setTeamList ({
+        team_id:res.data.team_id,
+        team_count:res.data.team_count,
+        team_name:res.data.team_name,
+        token:res.data.access,
+      });
+    })
+    .catch((error)=>{
+      setTeampop(false);
       console.log(error)
     })
 
-  },[])
+  };
 
     return (
       <div>
-        {teamList.length ? (
+        {!teampop ? (
         <div>
           <Header />
           <TeamTableComponent data={teamList}/>
@@ -42,12 +46,12 @@ const TeamsComponent = (props) => {
           <div className="bg-[#aba9af] opacity-[0.5] w-[100%] h-[100%] absolute top-0 left-0  z-10"></div>
           <div className=" flex items-center justify-center h-screen w-screen absolute top-2/4 left-2/4 transform -translate-x-1/2 -translate-y-1/2 z-20 ">
             <div className="bg-[#fff] h-[320px] w-[600px]  rounded-lg -z-10">
-              <div className="">
+              {/* <div className="">
                 <i
                   className="fa-solid fa-xmark text-red-500 pt-3 float-right text-2xl cursor-pointer mr-5"
                   onClick={props.click}
                 ></i>
-              </div>
+              </div> */}
               <div className="w-[480px] m-auto">
                 <div className="flex pt-10 items-center space-x-2">
                   <i className="fa-solid fa-user-plus text-2xl "></i>

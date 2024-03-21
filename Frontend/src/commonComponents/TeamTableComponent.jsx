@@ -3,19 +3,11 @@ import { Divider, Table } from "antd";
 const columns = [
   {
     title: "S.No",
-    dataIndex: "id",
+    dataIndex: "team_id",
   },
   {
     title: "Team name",
     dataIndex: "team_name",
-  },
-  {
-    title: "Created at",
-    dataIndex: "created_at",
-  },
-  {
-    title: "Updated at",
-    dataIndex: "updated_at",
   },
   {
     title: "Member count",
@@ -31,7 +23,12 @@ const TeamTableComponent = ({ data }) => (
       dataSource={data}
       bordered
       size="small"
-      // onClick=()
+      onRow={(record, rowIndex) => {
+        return {
+        onClick: event => {
+        console.log(record)
+        }}
+      }}
     />
   </>
 );
