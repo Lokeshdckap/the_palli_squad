@@ -48,7 +48,7 @@ export default function InviteUsers({ closeTab, setCloseTab, handleOpenClose }) 
         <>
             <div className="relative">
                 <div className="flex justify-between px-3 py-2">
-                    <p>Teams</p>
+                    <p className="text-2xl">Teams</p>
                     <button className="px-10 py-3 bg-red-500 rounded-md text-[16px]" onClick={() => { setCloseTab(true) }}>Invite</button>
                 </div>
                 {closeTab && (<>

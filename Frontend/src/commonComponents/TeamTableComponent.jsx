@@ -13,6 +13,14 @@ const columns = [
     title: "Member count",
     dataIndex: "team_count",
   },
+  {
+    title: "Created At",
+    dataIndex: "created_at",
+  },
+  {
+    title: "Updated At",
+    dataIndex: "updated_at",
+  },
 ];
 
 const TeamTableComponent = ({ data }) => (
@@ -25,9 +33,10 @@ const TeamTableComponent = ({ data }) => (
       size="small"
       onRow={(record, rowIndex) => {
         return {
-        onClick: event => {
-        console.log(record)
-        }}
+          onClick: event => {
+            console.log(record)
+          }
+        }
       }}
     />
   </>

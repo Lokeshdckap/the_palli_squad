@@ -46,9 +46,8 @@ const TeamsComponent = (props) => {
 
       ) : (
         <div>
-          <div className="bg-[#aba9af] opacity-[0.5] w-[100%] h-[100%] absolute top-0 left-0  z-10"></div>
           <div className=" flex items-center justify-center h-screen w-screen absolute top-2/4 left-2/4 transform -translate-x-1/2 -translate-y-1/2 z-20 ">
-            <div className="bg-[#fff] h-[320px] w-[600px]  rounded-lg -z-10">
+            <div className="bg-[#fff] h-[320px] w-[600px] rounded-lg -z-10">
               {/* <div className="">
                 <i
                   className="fa-solid fa-xmark text-red-500 pt-3 float-right text-2xl cursor-pointer mr-5"

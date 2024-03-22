@@ -50,7 +50,7 @@ export const UsersComponent = ({ closeTab, setCloseTab, handleOpenClose }) => {
 
       <div className="relative">
         <div className="flex justify-between px-3 py-2">
-          <p>Users</p>
+          <p className="text-2xl">Users</p>
           <button className="px-10 py-3 bg-red-500 rounded-md text-[16px]" onClick={() => { setCloseTab(true) }}>Invite</button>
         </div>
 

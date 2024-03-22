@@ -10,6 +10,10 @@ const columns = [
     dataIndex: "user_name",
   },
   {
+    title: "Email",
+    dataIndex: "email",
+  },
+  {
     title: "Created at",
     dataIndex: "created_at",
   },
@@ -22,7 +26,7 @@ const columns = [
 
 const TeamTableComponent = ({ data }) => (
   <>
-    {console.log(data)}
+    {/* {console.log(data)} */}
     <Table
       columns={columns}
       dataSource={data}
