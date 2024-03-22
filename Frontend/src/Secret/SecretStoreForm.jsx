@@ -143,55 +143,57 @@ export default function SecretStoreForm({ closeStoreTab, setCloseStoreTab }) {
         <div>
             {/* <Header /> */}
             {closeStoreTab && (
-                <div className="flex justify-center items-center mt-[10px]">
-                    <div className="w-[85%] border bg-white px-6 py-2 shadow-inner rounded-md">
-                        <div className="flex justify-between">
-                            <h1 className="text-[24px] pb-[6px]">Store Secrets</h1>
-                            <p onClick={handleClick} className="cursor-pointer"><FontAwesomeIcon icon={faTimes} className="h-6 w-6" /></p>
-                        </div>
-                        <form className="h-[480px] overflow-y-scroll" onSubmit={handleSubmit}>
-                            <div className="flex flex-col gap-2">
-                                <label>Title</label>
-                                <input type="text" placeholder="Title" name="title" className="pl-[5px] py-2 border rounded-md" value={formData.title} onChange={handleChange} />
-                                <label>Username</label>
-                                <input type="text" placeholder="Username" name="userName" className="pl-[5px] py-2 border rounded-md" value={formData.userName} onChange={handleChange} />
-                                <label>Description</label>
-                                <textarea type="text" placeholder="Description" name="description" className="pl-[5px] py-2 border rounded-md" value={formData.description} onChange={handleChange} />
-                                <label>Password</label>
-                                <div className='relative'>
-                                    <input type={showPassword ? "text" : "password"} placeholder='Secure password' name="password" className="pl-[5px] py-2 border rounded-md w-full" value={formData.password} onChange={handleChange}></input>
-                                    <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} onClick={() => handleEyeIcon(null, 'password')} className='absolute right-3 top-4 cursor-pointer' />
-                                </div>
+                <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+                    <div className="flex justify-center items-center mt-[10px]">
+                        <div className="border bg-white px-6 py-2 shadow-inner rounded-md">
+                            <div className="flex justify-between">
+                                <h1 className="text-[24px] pb-[6px]">Store Secrets</h1>
+                                <p onClick={handleClick} className="cursor-pointer"><FontAwesomeIcon icon={faTimes} className="h-6 w-6" /></p>
                             </div>
-                            <div className="flex flex-col py-3 gap-3">
-                                {apiPairs.map((pair, index) => (
-                                    <div key={index} className="flex gap-3 items-center">
-                                        <label>Api Key</label>
-                                        <input type="text" placeholder="API Key" name='apiKey' value={pair.apiKey} className="pl-[5px] py-2 border rounded-md" onChange={(e) => handleMultipleInputs(e.target.value, index, 'apiKey')} />
-                                        <label>Api Value</label>
-                                        <div className='relative'>
-                                            <input type={showApiValue[index] ? "text" : "password"} placeholder="API Value" name='apiValue' value={pair.apiValue} className="pl-[5px] py-2 border rounded-md" onChange={(e) => handleMultipleInputs(e.target.value, index, 'apiValue')} />
-                                            <FontAwesomeIcon icon={showApiValue[index] ? faEyeSlash : faEye} onClick={() => handleEyeIcon(index, "apiValue")} className='absolute right-3 top-4 cursor-pointer' />
-                                        </div>
-                                        <button onClick={(e) => { e.preventDefault(); handleDeleteClick(index) }} className='bg-red-500 py-2 px-3 rounded-md'>Delete</button>
-                                        {index === apiPairs.length - 1 && (
-                                            <div className="flex items-center gap-3">
-                                                <p className='bg-green-500 py-2 px-3 rounded-md' onClick={handleApiPair}>
-                                                    Add<FontAwesomeIcon className="" icon={faPlus} />
-                                                </p>
-                                            </div>
-                                        )}
+                            <form className="h-[480px] overflow-y-scroll" onSubmit={handleSubmit}>
+                                <div className="flex flex-col gap-2">
+                                    <label>Title</label>
+                                    <input type="text" placeholder="Title" name="title" className="pl-[5px] py-2 border rounded-md" value={formData.title} onChange={handleChange} />
+                                    <label>Username</label>
+                                    <input type="text" placeholder="Username" name="userName" className="pl-[5px] py-2 border rounded-md" value={formData.userName} onChange={handleChange} />
+                                    <label>Description</label>
+                                    <textarea type="text" placeholder="Description" name="description" className="pl-[5px] py-2 border rounded-md" value={formData.description} onChange={handleChange} />
+                                    <label>Password</label>
+                                    <div className='relative'>
+                                        <input type={showPassword ? "text" : "password"} placeholder='Secure password' name="password" className="pl-[5px] py-2 border rounded-md w-full" value={formData.password} onChange={handleChange}></input>
+                                        <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} onClick={() => handleEyeIcon(null, 'password')} className='absolute right-3 top-4 cursor-pointer' />
                                     </div>
-                                ))}
-                            </div>
-                            <div className='flex gap-3'>
-                                <label>Upload File</label>
-                                <input type='file' name='file' onChange={handleFileChange} accept='.txt, .doc, .pdf, .docx' />
-                            </div>
-                            <div className='text-center'>
-                                <button type='submit' className='bg-red-500 py-2 px-5 rounded-md'>Submit</button>
-                            </div>
-                        </form>
+                                </div>
+                                <div className="flex flex-col py-3 gap-3">
+                                    {apiPairs.map((pair, index) => (
+                                        <div key={index} className="flex gap-3 items-center">
+                                            <label>Api Key</label>
+                                            <input type="text" placeholder="API Key" name='apiKey' value={pair.apiKey} className="pl-[5px] py-2 border rounded-md" onChange={(e) => handleMultipleInputs(e.target.value, index, 'apiKey')} />
+                                            <label>Api Value</label>
+                                            <div className='relative'>
+                                                <input type={showApiValue[index] ? "text" : "password"} placeholder="API Value" name='apiValue' value={pair.apiValue} className="pl-[5px] py-2 border rounded-md" onChange={(e) => handleMultipleInputs(e.target.value, index, 'apiValue')} />
+                                                <FontAwesomeIcon icon={showApiValue[index] ? faEyeSlash : faEye} onClick={() => handleEyeIcon(index, "apiValue")} className='absolute right-3 top-4 cursor-pointer' />
+                                            </div>
+                                            <button onClick={(e) => { e.preventDefault(); handleDeleteClick(index) }} className='bg-red-500 py-2 px-3 rounded-md'>Delete</button>
+                                            {index === apiPairs.length - 1 && (
+                                                <div className="flex items-center gap-3">
+                                                    <p className='bg-green-500 py-2 px-3 rounded-md' onClick={handleApiPair}>
+                                                        Add<FontAwesomeIcon className="" icon={faPlus} />
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className='flex gap-3'>
+                                    <label>Upload File</label>
+                                    <input type='file' name='file' onChange={handleFileChange} accept='.txt, .doc, .pdf, .docx' />
+                                </div>
+                                <div className='text-center'>
+                                    <button type='submit' className='bg-red-500 py-2 px-5 rounded-md'>Submit</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             )}
