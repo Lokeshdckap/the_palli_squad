@@ -19,6 +19,7 @@ export default function SetPassword() {
     }
 
     const encryptPassword = (encryptData) => {
+        // console.log(encryptData,"encrypt-----")
         const secretKey = process.env.REACT_APP_SECRET_KEY;
         const securePassword = Crypto.AES.encrypt(encryptData, secretKey).toString();
         return securePassword

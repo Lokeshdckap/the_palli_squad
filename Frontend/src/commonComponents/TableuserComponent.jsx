@@ -3,24 +3,25 @@ import { Divider, Table } from "antd";
 const columns = [
   {
     title: "S.No",
-    dataIndex: "team_id",
+    dataIndex: "id",
   },
   {
-    title: "Team name",
-    dataIndex: "team_name",
+    title: "Name",
+    dataIndex: "user_name",
   },
   {
-    title: "Member count",
-    dataIndex: "team_count",
+    title: "Email",
+    dataIndex: "email",
   },
   {
-    title: "Created At",
+    title: "Created at",
     dataIndex: "created_at",
   },
   {
-    title: "Updated At",
+    title: "Updated at",
     dataIndex: "updated_at",
   },
+
 ];
 
 const TeamTableComponent = ({ data }) => (
@@ -31,13 +32,7 @@ const TeamTableComponent = ({ data }) => (
       dataSource={data}
       bordered
       size="small"
-      onRow={(record, rowIndex) => {
-        return {
-          onClick: event => {
-            console.log(record)
-          }
-        }
-      }}
+      // onClick=()
     />
   </>
 );

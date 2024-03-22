@@ -4,48 +4,50 @@ import { PopupInput } from "./TeamPopupInput";
 import { PopupButton } from "./TeamPopupButton";
 import axios from "axios";
 import TeamTableComponent from "../commonComponents/TeamTableComponent"
+import InviteUsers from "./InviteUsers";
 
 const TeamsComponent = (props) => {
-  const [teamList,setTeamList] = useState();
-  const [teampop,setTeampop] = useState(false);
+  const [teamList, setTeamList] = useState();
+  const [teampop, setTeampop] = useState(false);
+  const [closeTab, setCloseTab] = useState(false)
 
-
-  const useEffect = async(e)=>{
+  const handleOpenClose = () => {
+    setCloseTab(false)
+  }
+  const useEffect = async (e) => {
     setTeampop(true);
     await axios
-    .get("/api/teams/getAllTeam",{"token": "token here"})
-    .then((res)=>{
-      console.log(res);
-      
-      setTeampop(false);
-      setTeamList ({
-        team_id:res.data.team_id,
-        team_count:res.data.team_count,
-        team_name:res.data.team_name,
-        token:res.data.access,
-      });
-    })
-    .catch((error)=>{
-      setTeampop(false);
-      console.log(error)
-    })
+      .get("/api/teams/getAllTeam", { "token": "token here" })
+      .then((res) => {
+        console.log(res);
+
+        setTeampop(false);
+        setTeamList({
+          team_id: res.data.team_id,
+          team_count: res.data.team_count,
+          team_name: res.data.team_name,
+          token: res.data.access,
+        });
+      })
+      .catch((error) => {
+        setTeampop(false);
+        console.log(error)
+      })
 
   };
-
-    return (
-      <div>
-        {!teampop ? (
+  return (
+    <div>
+      {!teampop ? (
         <div>
           <Header />
-          <TeamTableComponent data={teamList}/>
-         
+          <InviteUsers closeTab={closeTab} setCloseTab={setCloseTab} handleOpenClose={handleOpenClose} />
+          {!closeTab && (<TeamTableComponent data={teamList} />)}
         </div>
-          
-        ) : (
-          <div>
-          <div className="bg-[#aba9af] opacity-[0.5] w-[100%] h-[100%] absolute top-0 left-0  z-10"></div>
+
+      ) : (
+        <div>
           <div className=" flex items-center justify-center h-screen w-screen absolute top-2/4 left-2/4 transform -translate-x-1/2 -translate-y-1/2 z-20 ">
-            <div className="bg-[#fff] h-[320px] w-[600px]  rounded-lg -z-10">
+            <div className="bg-[#fff] h-[320px] w-[600px] rounded-lg -z-10">
               {/* <div className="">
                 <i
                   className="fa-solid fa-xmark text-red-500 pt-3 float-right text-2xl cursor-pointer mr-5"
@@ -81,10 +83,10 @@ const TeamsComponent = (props) => {
             </div>
           </div>
         </div>
-        )}
-        
-      </div>
-    );
+      )}
+
+    </div>
+  );
 
 };
 export default TeamsComponent;
