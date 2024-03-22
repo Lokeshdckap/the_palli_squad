@@ -3,28 +3,44 @@ import { Header } from "../Header/Header";
 import invitePeople from "../../src/assets/images/addFriends.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import InviteUsersBtn from "./InviteUsersBtn"
+import InviteUsersBtn from "./InviteUsersBtn";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from "axios";
+
 export const UsersComponent = ({ closeTab, setCloseTab, handleOpenClose }) => {
 
   const [inviteEmail, setInviteEmail] = useState("");
+  const [role, setRole] = useState("")
   const [isValid, setIsValid] = useState("")
 
   const handleChange = (e) => {
-    const emailAddress = e.target.value
-    setInviteEmail(emailAddress)
-
+    const { name, value } = e.target;
+    if (name === "email") {
+      setInviteEmail(value);
+    } else if (name === "role") {
+      setRole(value);
+    }
     if (isValid) {
-      setIsValid("")
+      setIsValid("");
     }
   }
 
-  const handleInviteUsers = (e) => {
+
+  const handleInviteUsers = async (e) => {
     e.preventDefault();
-    if (inviteEmail) {
-      console.log("Sent")
+
+    try {
+      const response = await axios.post("", { email: inviteEmail, role: role })
+      console.log(response)
+      toast.success("Email sent Successfully");
     }
-    if (!inviteEmail.trim()) {
-      setIsValid("Please Enter an Mail-Id to invite Users")
+    catch (error) {
+      if (!inviteEmail.trim()) {
+        // setIsValid("Please Enter an Mail-Id to invite Users")
+        toast.error("Please enter email address")
+      }
+
     }
   }
 
@@ -48,19 +64,33 @@ export const UsersComponent = ({ closeTab, setCloseTab, handleOpenClose }) => {
             </div>
             <img src={invitePeople} className="m-auto w-auto h-[75%] py-5" />
             <form onSubmit={handleInviteUsers} className="mx-auto">
-              <label className="pl-16 pr-3 text-[16px]">Email</label>
-              <input
-                placeholder="Email"
-                type="email"
-                className="h-10 w-80 px-2 border rounded-md"
-                name="email"
-                value={inviteEmail}
-                onChange={handleChange} />
+              <div className="flex items-center justify-center gap-3">
+                <label className="pr-3 text-[16px]">Email</label>
+                <input
+                  placeholder="Email"
+                  type="email"
+                  className="h-10 w-80 px-2 border rounded-md"
+                  name="email"
+                  value={inviteEmail}
+                  onChange={handleChange} />
+                <select
+                  value={role}
+                  onChange={handleChange}
+                  name="role"
+                  className="p-2"
+
+                >
+                  <option value="">Select Role</option>
+                  <option value="admin">Admin</option>
+                  <option value="manager">Manager</option>
+                  <option value="collabrator">Collabrator</option>
+                </select>
+              </div>
               <div className="flex items-center justify-center py-1">
                 <button className="px-10 py-3 bg-red-500 rounded-md ">Invite</button>
               </div>
             </form>
-            {isValid && <p className="text-red-500 text-center">{isValid}</p>}
+            {/* {isValid && <p className="text-red-500 text-center">{isValid}</p>} */}
           </div>
         </>)}
 

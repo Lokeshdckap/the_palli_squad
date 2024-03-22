@@ -12,7 +12,9 @@ import StoreSecrets from "./Auth/StoreSecrets";
 import { Admin } from "./Admin/Admin";
 import { Users } from "./Users/Users";
 import { Teams } from "./Teams/Teams";
+// import UsersCheck from "./Users/UsersComponent" 
 import { Secrets } from "./Secret/Secrets";
+
 
 const router = createBrowserRouter([
   {
@@ -51,13 +53,13 @@ const router = createBrowserRouter([
       {
         path: "/admin/pendingList",
         element: <Admin />,
-        
+
       },
       {
-        path:"/storeSecrets",
-        element:<StoreSecrets/>
+        path: "/storeSecrets",
+        element: <StoreSecrets />
       }
-      
+
     ],
   },
 
@@ -81,6 +83,10 @@ const router = createBrowserRouter([
         path: "/email-verify/:uuid/:token",
         element: <EmailVerificationCheck />,
 
+      },
+      {
+        path: "/users",
+        element: <Users />,
       },
       //   {
       //     path: "/forgotpassword",

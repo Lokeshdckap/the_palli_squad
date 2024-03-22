@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import Router from './Router';
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 import reportWebVitals from './reportWebVitals';
 import { ContextProvider } from './context/ContextProvider';
 import { RouterProvider } from 'react-router-dom';
@@ -13,6 +14,7 @@ root.render(
   <React.StrictMode>
     <ContextProvider>
       <RouterProvider router={Router} />
+      <ToastContainer/>
     </ContextProvider>
   </React.StrictMode>
 );
