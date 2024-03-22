@@ -123,10 +123,10 @@ const Signin = () => {
                         required=""
                         {...register("email", {
                           required: "Email is required",
-                          pattern: {
-                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                            message: "Invalid email address",
-                          },
+                          // pattern: {
+                          //   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                          //   message: "Invalid email address",
+                          // },
                         })}
                       />
                       {errors.email && (
@@ -150,16 +150,16 @@ const Signin = () => {
                         required=""
                         {...register("password", {
                           required: "Password is required",
-                          minLength: {
-                            value: 8,
-                            message: "Password must be at least 8 characters",
-                          },
-                          pattern: {
-                            value:
-                              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-                            message:
-                              "Password must include at least one uppercase letter, one lowercase letter, one digit, and one special character",
-                          },
+                          // minLength: {
+                          //   value: 8,
+                          //   message: "Password must be at least 8 characters",
+                          // },
+                          // pattern: {
+                          //   value:
+                          //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+                          //   message:
+                          //     "Password must include at least one uppercase letter, one lowercase letter, one digit, and one special character",
+                          // },
                         })}
                       />
 
