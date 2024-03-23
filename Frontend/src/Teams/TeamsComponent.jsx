@@ -4,16 +4,23 @@ import { PopupInput } from "./TeamPopupInput";
 import { PopupButton } from "./TeamPopupButton";
 import axios from "axios";
 import TeamTableComponent from "../commonComponents/TeamTableComponent"
+import TeamName from "./TeamName";
 import InviteUsers from "./InviteUsers";
+import CreateTeamForm from "./CreateTeamForm";
 
 const TeamsComponent = (props) => {
-  const [teamList, setTeamList] = useState();
+  const [teamList, setTeamList] = useState(false);
   const [teampop, setTeampop] = useState(false);
-  const [closeTab, setCloseTab] = useState(false)
+  const [closeTab, setCloseTab] = useState(false);
+  const [teamCreateForm, setTeamCreateForm] = useState(false);
 
   const handleOpenClose = () => {
     setCloseTab(false)
   }
+  const handleTeamForm = () => {
+    setTeamCreateForm(false)
+  }
+
   const useEffect = async (e) => {
     setTeampop(true);
     await axios
@@ -35,13 +42,16 @@ const TeamsComponent = (props) => {
       })
 
   };
+
+  console.log(teamCreateForm, "CreateTeamForm")
   return (
     <div>
       {!teampop ? (
         <div>
           <Header />
-          <InviteUsers closeTab={closeTab} setCloseTab={setCloseTab} handleOpenClose={handleOpenClose} />
-          {!closeTab && (<TeamTableComponent data={teamList} />)}
+          {/* <InviteUsers closeTab={closeTab} setCloseTab={setCloseTab} handleOpenClose={handleOpenClose} /> */}
+          <CreateTeamForm teamCreateForm={teamCreateForm} setTeamCreateForm={setTeamCreateForm} handleTeamForm={handleTeamForm} />
+          {!teamCreateForm && (<TeamName />)}
         </div>
 
       ) : (
