@@ -39,7 +39,6 @@ export const SideBarComponent = ({ param }) => {
               Secrets
             </p>
           </div>
-
           {/* {userDetail?.role_type === 1 && (
             <div
               className={` w-[100%] m-auto rounded-sm ${
@@ -93,7 +92,6 @@ export const SideBarComponent = ({ param }) => {
               )}
             </div>
           )} */}
-
           <div
             className={`hover:bg-[#7d8285] w-[100%] m-auto rounded-sm ${
               adminList == "/admin" && "bg-[#7d8285]"
@@ -144,18 +142,7 @@ export const SideBarComponent = ({ param }) => {
                 </div>
               </Link>
             </div>
-          )}
-
-          <div
-            className={`hover:bg-[#7d8285] w-[100%] m-auto rounded-sm my-2 ${
-              window.location.pathname == "/users" && "bg-[#7d8285]"
-            } `}
-            onClick={() => handle("users")}
-          >
-            <p className="text-white text-[18px] pl-3 cursor-pointer py-1.5 ">
-              Users
-            </p>
-          </div>
+          )}{" "}
           {/* </Link> */}
           {/* <Link to={"/teams"}> */}
           <div

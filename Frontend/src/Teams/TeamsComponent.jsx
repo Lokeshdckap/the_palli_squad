@@ -43,7 +43,7 @@ const TeamsComponent = (props) => {
 
   };
 
-  console.log(teamCreateForm, "CreateTeamForm")
+  // console.log(teamCreateForm, "CreateTeamForm")
   return (
     <div>
       {!teampop ? (
