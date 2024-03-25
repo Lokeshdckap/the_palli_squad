@@ -40,7 +40,7 @@ const router = createBrowserRouter([
         element: <Teams />,
       },
       {
-        path: "/secrets",
+        path: "/secrets/:uuid?",
         element: <Secrets />,
       },
       {
