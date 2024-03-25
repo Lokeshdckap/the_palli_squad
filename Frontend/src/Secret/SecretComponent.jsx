@@ -3,7 +3,8 @@ import { Header } from "../Header/Header";
 import { useLocation, useParams } from "react-router-dom";
 import axiosClient from "../axios-client";
 import SecretTable from "../commonComponents/SecretTable";
-
+import SecretsTableComponent from "../commonComponents/SecretsTable"
+import SecretStoreForm from "./SecretStoreForm";
 export const SecretComponent = () => {
   const params = useParams();
   const [secrets, setSecrets] = useState([]);
@@ -13,7 +14,7 @@ export const SecretComponent = () => {
   const [authUser, setAuthUser] = useState(false);
   const [decryptedData, setDecryptedData] = useState("");
   const [decryptedAttachments, setDecryptedAttachments] = useState("");
-
+  const [closeStoreTab, setCloseStoreTab] = useState(false);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const hash_id = queryParams.get("hash_id");
@@ -103,9 +104,16 @@ export const SecretComponent = () => {
     }
   };
   return (
+    <>
     <div>
       <Header />
       <div>
+      {!closeStoreTab && (
+        <div className="flex justify-between p-2 items-center">
+          <p className="text-2xl ">Secrets</p>
+          <button className="px-10 py-3 bg-red-500 rounded-md text-[16px]" onClick={() => { setCloseStoreTab(true) }}>Add+</button>
+        </div>
+      )}
         <SecretTable
           secret={secrets}
           setPassword={setPassword}
@@ -125,6 +133,14 @@ export const SecretComponent = () => {
           decryptedAttachments={decryptedAttachments}
         />
       </div>
+      <div>
+   
+
+      {/* {!closeStoreTab && (<SecretsTableComponent />)} */}
+
+      <SecretStoreForm closeStoreTab={closeStoreTab} setCloseStoreTab={setCloseStoreTab} />
     </div>
-  );
-};
+    </div>
+    </>
+
+      )}

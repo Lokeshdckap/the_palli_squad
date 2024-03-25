@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import otp from '../assets/images/OTP.png';
-import Login from './Login/login';
+// import Login from './Login/login';
 import Smiley from './Emojis/Smiley';
 
 export default function OTP() {

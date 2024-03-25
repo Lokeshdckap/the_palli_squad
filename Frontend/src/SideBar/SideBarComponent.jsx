@@ -92,8 +92,7 @@ export const SideBarComponent = ({ param }) => {
                 </div>
               )}
             </div>
-          )}
-
+          )} 
           {/* <div
             className={`hover:bg-[#7d8285] w-[100%] m-auto rounded-sm ${
               adminList == "/admin" && "bg-[#7d8285]"
@@ -110,8 +109,8 @@ export const SideBarComponent = ({ param }) => {
                 )}
               </span>
             </p>
-          </div>
-          {adminList && (
+          </div> */}
+          {/* {adminList && (
             <div
               className=""
               style={{
@@ -144,20 +143,7 @@ export const SideBarComponent = ({ param }) => {
                 </div>
               </Link>
             </div>
-          )} */}
-
-          <div
-            className={`hover:bg-[#7d8285] w-[100%] m-auto rounded-sm my-2 ${
-              window.location.pathname == "/users" && "bg-[#7d8285]"
-            } `}
-            onClick={() => handle("users")}
-          >
-            <p className="text-white text-[18px] pl-3 cursor-pointer py-1.5 ">
-              Users
-            </p>
-          </div>
-          {/* </Link> */}
-          {/* <Link to={"/teams"}> */}
+          )}{" "} */}
           <div
             className={`hover:bg-[#7d8285] w-[100%] m-auto rounded-sm my-2 ${
               window.location.pathname == "/teams" && "bg-[#7d8285]"
@@ -168,7 +154,6 @@ export const SideBarComponent = ({ param }) => {
               Teams
             </p>
           </div>
-          {/* </Link> */}
         </div>
       </div>
     </div>
