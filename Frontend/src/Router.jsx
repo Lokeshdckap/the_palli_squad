@@ -14,6 +14,7 @@ import { Users } from "./Users/Users";
 import { Teams } from "./Teams/Teams";
 // import UsersCheck from "./Users/UsersComponent" 
 import { Secrets } from "./Secret/Secrets";
+import FilePassword from "./Secret/FilePassword"
 
 
 const router = createBrowserRouter([
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
       {
         path: "/storeSecrets",
         element: <StoreSecrets />
+      },
+      {
+        path:"/filePassword",
+        element: <FilePassword/>
       }
 
     ],
