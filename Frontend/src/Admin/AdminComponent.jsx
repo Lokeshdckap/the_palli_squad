@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Header } from "../Header/Header";
 import { useParams } from "react-router-dom";
-import { ExistingUsers } from "./ExistingUser.jsx/ExistingUsers";
+import  ExistingUsers from "./ExistingUser.jsx/ExistingUsers";
 import { PendingAuthUser } from "./PendingAuthUsers/PendingAuthUser";
 import axiosClient from "../axios-client";
 import { useMyContext } from "../context/AppContext";
@@ -45,7 +45,7 @@ export const AdminComponent = () => {
     axiosClient
       .get("/api/superAdmin/approveWaitingForNewSignups")
       .then((res) => {
-        console.log(res.data.users);
+        // console.log(res.data.users);
         setApprovalSignup(res.data.users);
       })
       .catch((err) => {

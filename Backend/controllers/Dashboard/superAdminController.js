@@ -4,7 +4,7 @@ const Unauthorization = db.unAuthorizedDevice;
 const { Op, where } = require("sequelize");
 const uuid = require("uuid");
 const IP = require("ip");
-const crypto = require('crypto');
+
 const getAllUsers = async (req, res) => {
   try {
     const findSuperAdmin = await User.findOne({
@@ -28,25 +28,12 @@ const getAllUsers = async (req, res) => {
       },
     });
 
-    // Encrypt the data
-    const algorithm = 'aes-256-cbc';
-    const key = 'lokesh1234567890'; // Use a secure method to generate a key
-    const iv = crypto.randomBytes(16); // Use a secure method to generate an IV
+ 
+    return res.status(200).json({
+      users: users,
+      msg: "Users fetching Success",
+    });
 
-    const cipher = crypto.createCipheriv(algorithm, key, iv);
-    let encryptedData = cipher.update(JSON.stringify({
-        msg: "Users Fetched Successfully",
-        users: users,
-    }), 'utf-8', 'hex');
-    encryptedData += cipher.final('hex');
-
-    const responseData = {
-        iv: iv.toString('hex'),
-        encryptedData: encryptedData,
-    };
-
-    res.json(responseData);
-    // return res.status(200).type('plain');
   } catch (err) {
     return res.status(500).json({
       msg: "Users fetching error",

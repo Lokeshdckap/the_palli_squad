@@ -4,6 +4,11 @@ import Button from "../../src/commonComponents/Button";
 import { useForm } from "react-hook-form";
 import superAdmin from "../assets/images/adminAccess.png";
 import image from "../assets/images/OTP.png";
+<<<<<<< HEAD
+=======
+import { useStateContext } from "../context/ContextProvider";
+import HashLoader from "react-spinners/HashLoader";
+>>>>>>> 17055d636bdb2ce22145c3b1c0a208a30c9b27c7
 
 import axiosClient from "../axios-client";
 
@@ -24,6 +29,7 @@ const Signin = () => {
 
   const [errMessage, setErrMessage] = useState("");
   const [otpValue, setOtpValue] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // ----------------Handling form visibilty an hidden-------------------------------------
   const handleButton = () => {
@@ -40,6 +46,7 @@ const Signin = () => {
   };
 
   const handleSignin = (data) => {
+<<<<<<< HEAD
     console.log(data);
 
     axiosClient
@@ -47,6 +54,14 @@ const Signin = () => {
       .then((res) => {
         console.log(res);
         setOtp(true);
+=======
+    setLoading(true);
+    axiosClient
+      .post("/api/auth/login", data)
+      .then((res) => {
+        setOtps(true);
+        setLoading(false);
+>>>>>>> 17055d636bdb2ce22145c3b1c0a208a30c9b27c7
       })
       .catch((err) => {
         const response = err.response;
@@ -54,6 +69,7 @@ const Signin = () => {
           // showToastMessage(response.data);
           // openNotificationWithIcon('success')
           setAdminAccess(true);
+          setLoading(false);
         } else {
           console.error("Error:", response?.status);
         }
@@ -66,7 +82,31 @@ const Signin = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+<<<<<<< HEAD
     console.log("Entered OTP:", otp);
+=======
+    let payload = {
+      otp: otp,
+    };
+    axiosClient
+      .post("/api/auth/verify-otp", payload)
+      .then((res) => {
+        setAuth({
+          token: res.data.access,
+        });
+        setOtps(false);
+      })
+      .catch((err) => {
+        const response = err.response;
+        if (response && response?.status === 401) {
+          // showToastMessage(response.data);
+          // openNotificationWithIcon('success')
+          setAdminAccess(true);
+        } else {
+          console.error("Error:", response?.status);
+        }
+      });
+>>>>>>> 17055d636bdb2ce22145c3b1c0a208a30c9b27c7
   };
 
   // const MyButton = () => {
@@ -106,10 +146,10 @@ const Signin = () => {
                         required=""
                         {...register("email", {
                           required: "Email is required",
-                          pattern: {
-                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                            message: "Invalid email address",
-                          },
+                          // pattern: {
+                          //   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                          //   message: "Invalid email address",
+                          // },
                         })}
                       />
                       {errors.email && (
@@ -133,16 +173,16 @@ const Signin = () => {
                         required=""
                         {...register("password", {
                           required: "Password is required",
-                          minLength: {
-                            value: 8,
-                            message: "Password must be at least 8 characters",
-                          },
-                          pattern: {
-                            value:
-                              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-                            message:
-                              "Password must include at least one uppercase letter, one lowercase letter, one digit, and one special character",
-                          },
+                          // minLength: {
+                          //   value: 8,
+                          //   message: "Password must be at least 8 characters",
+                          // },
+                          // pattern: {
+                          //   value:
+                          //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+                          //   message:
+                          //     "Password must include at least one uppercase letter, one lowercase letter, one digit, and one special character",
+                          // },
                         })}
                       />
 
@@ -247,6 +287,16 @@ const Signin = () => {
             </div>
           </div>
         )}
+        {loading && (
+            <>
+              <div className="bg-[#aeaeca] opacity-[0.5] w-[100%] h-[100vh] absolute top-0 left-0  z-10"></div>
+              <div className="">
+                <p className="absolute top-[48%] left-[48%] z-50 ">
+                  <HashLoader color="#3197e8" />
+                </p>
+              </div>
+            </>
+          )}
       </div>
     </div>
   );

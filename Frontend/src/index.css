@@ -8,8 +8,12 @@
     font-size: 12px;
   }
 
+<<<<<<< HEAD
 
 .otp{
+=======
+  .otp{
+>>>>>>> 17055d636bdb2ce22145c3b1c0a208a30c9b27c7
     background-color: rgb(243, 243, 243) !important;
     width: 2.5em !important;
     height: 2.5em !important;
@@ -17,3 +21,10 @@
     border: 1px solid grey !important;
     border-radius: 4px !important;
 }
+<<<<<<< HEAD
+=======
+
+.pointer-cursor {
+  cursor: pointer;
+}
+>>>>>>> 17055d636bdb2ce22145c3b1c0a208a30c9b27c7

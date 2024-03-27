@@ -5,6 +5,7 @@ const fs = require("fs");
 const User = db.users;
 const emailVerificationToken = db.email_verification_token; // Email Verification Token
 const OTP = db.otp_verifications;
+const passPhrase = db.pass_pharse;
 const crypto = require("crypto");
 const tokens = require("../../utils/generateAuthToken");
 const generateAuthToken = tokens.generateAuthToken;
@@ -216,6 +217,9 @@ const verify_otp = async (req, res) => {
     },
   });
   
+
+
+
   if (userOtp && findUser) {
     if (findUser.isVerified && findUser.isApproved) {
       let access_token = generateAuthToken(findUser);
@@ -237,9 +241,80 @@ const verify_otp = async (req, res) => {
   }
 };
 
+const passphrase = async (req, res) => {
+  try {
+    const passphrased = req.body.passPhrase;
+    const checkPassPhrase = await passPhrase.findOne({
+      where: {
+        user_uuid: req.user.id,
+      },
+    });
+
+    if (!checkPassPhrase) {
+      const createPassPhrase = await passPhrase.create({
+        uuid: uuid.v4(),
+        pass_pharse: await bcrypt.hash(passphrased, 15),
+        user_uuid: req.user.id,
+      });
+      return res.status(200).json({
+        data: createPassPhrase,
+        msg: "Your PassPharse Created Sucessfully",
+      });
+    } else {
+      return res.status(500).json({
+        msg: "Your PassPharse already exists",
+      });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      err: err,
+    });
+  }
+};
+
+const checkPassPhrase = async (req, res) => {
+  try {
+    const passPhrased = req.body.passPhrase;
+
+    const user = await passPhrase.findOne({
+      where: {
+        user_uuid: req.user.id,
+      },
+    });
+
+    if (user && user.pass_pharse) {
+      await bcrypt.compare(passPhrased, user.pass_pharse, (err, isSame) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ error: "Internal Server Error" });
+        }
+        if (isSame) {
+          return res.status(200).json({
+            data : true,
+            msg: "You are now accessing the PassPhrase",
+          });
+        } else {
+          return res.status(404).json({
+            msg: "Unauthorized Access",
+          });
+        }
+      });
+    } else {
+      return res.status(404).json({
+        msg: "Unauthorized Access",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   register,
   login,
   verifyEmail,
   verify_otp,
+  passphrase,
+  checkPassPhrase,
 };
