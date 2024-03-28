@@ -34,7 +34,7 @@ export const HeaderComponent = () => {
   };
   return (
     <div>
-      <div className="flex justify-between px-[30px] py-[18px]">
+      <div className="flex justify-between px-[30px] py-[18px] bg-slate-900">
         <Search />
 
         <div onClick={handleProfile}>

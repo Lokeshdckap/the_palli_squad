@@ -18,17 +18,18 @@ export const SideBarComponent = ({ param }) => {
   };
 
   return (
-    <div className="bg-black w-[200px]  h-screen">
+    <div className="bg-slate-950 w-[200px]  h-screen">
       <div>
-        <div>
+        <div className="flex gap-4 mx-3 pt-4" >
           <img
-            src={"https://i.postimg.cc/W11rypJ7/book-3.png"}
+            src="https://i.postimg.cc/mDrRnHY3/shield.png"
             alt=""
-            className="h-6 text-[#F9EFD4] cursor-pointer"
+            className="h-8 text-[#F9EFD4] cursor-pointer"
           />
+          <p className="text-white text-[22px] font-semibold" >Vault</p>
         </div>
 
-        <div className="pt-12 w-[180px] m-auto">
+        <div className="pt-3 w-[180px] m-auto">
           <div
             className={`hover:bg-[#7d8285] w-[100%] m-auto rounded-sm my-2 ${
               window.location.pathname == "/secrets" && "bg-[#7d8285]"

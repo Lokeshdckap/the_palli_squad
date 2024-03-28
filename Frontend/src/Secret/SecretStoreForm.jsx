@@ -174,10 +174,10 @@ export default function SecretStoreForm({ closeStoreTab, setCloseStoreTab }) {
                                                 <input type={showApiValue[index] ? "text" : "password"} placeholder="API Value" name='apiValue' value={pair.apiValue} className="pl-[5px] py-2 border rounded-md" onChange={(e) => handleMultipleInputs(e.target.value, index, 'apiValue')} />
                                                 <FontAwesomeIcon icon={showApiValue[index] ? faEyeSlash : faEye} onClick={() => handleEyeIcon(index, "apiValue")} className='absolute right-3 top-4 cursor-pointer' />
                                             </div>
-                                            <button onClick={(e) => { e.preventDefault(); handleDeleteClick(index) }} className='bg-red-500 py-2 px-3 rounded-md'>Delete</button>
+                                            <button onClick={(e) => { e.preventDefault(); handleDeleteClick(index) }} className='bg-red-500 py-2 px-3 rounded-md text-white'>Delete</button>
                                             {index === apiPairs.length - 1 && (
                                                 <div className="flex items-center gap-3">
-                                                    <p className='bg-green-500 py-2 px-3 rounded-md' onClick={handleApiPair}>
+                                                    <p className='bg-green-500 py-2 px-3 rounded-md text-white' onClick={handleApiPair}>
                                                         Add<FontAwesomeIcon className="" icon={faPlus} />
                                                     </p>
                                                 </div>
@@ -190,7 +190,7 @@ export default function SecretStoreForm({ closeStoreTab, setCloseStoreTab }) {
                                     <input type='file' name='file' onChange={handleFileChange} accept='.txt, .doc, .pdf, .docx' />
                                 </div>
                                 <div className='text-center'>
-                                    <button type='submit' className='bg-red-500 py-2 px-5 rounded-md'>Submit</button>
+                                    <button type='submit' className='bg-red-600 py-2 px-6 rounded-md text-white'>Submit</button>
                                 </div>
                             </form>
                         </div>

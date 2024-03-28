@@ -46,7 +46,7 @@ export default function CreateTeamForm({ teamCreateForm, setTeamCreateForm, hand
             <div className="relative">
                 <div className="flex justify-between px-3 py-2">
                     <p className="text-2xl">Teams</p>
-                    <button className="px-10 py-3 bg-red-500 rounded-md text-[16px]" onClick={() => { setTeamCreateForm(true) }}>Create Team</button>
+                    <button className="px-8 py-2 bg-red-600 rounded-md text-[16px] text-white" onClick={() => { setTeamCreateForm(true) }}>Create Team</button>
                 </div>
                 {teamCreateForm && (<>
                     <div className='absolute top-0 left-[230px] border border-solid rounded-md w-[50%] h-[200px] mx-auto my-6 py-2 shadow-xl'>
@@ -68,7 +68,7 @@ export default function CreateTeamForm({ teamCreateForm, setTeamCreateForm, hand
                                     onChange={handleChange} />
                             </div>
                             <div className="flex items-center justify-center py-1 mt-3">
-                                <button className="px-10 py-3 bg-red-500 rounded-md">Create</button>
+                                <button className="px-8 py-2 bg-red-600 rounded-md text-white">Create</button>
                             </div>
                         </form>
                     </div>
