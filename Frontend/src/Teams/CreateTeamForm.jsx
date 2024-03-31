@@ -49,28 +49,30 @@ export default function CreateTeamForm({ teamCreateForm, setTeamCreateForm, hand
                     <button className="px-10 py-3 bg-red-500 rounded-md text-[16px]" onClick={() => { setTeamCreateForm(true) }}>Create Team</button>
                 </div>
                 {teamCreateForm && (<>
-                    <div className='absolute top-0 left-[230px] border border-solid rounded-md w-[50%] h-[500px] mx-auto my-6 py-2 shadow-xl'>
-                        <div className="flex justify-around pl-[120px] px-auto items-center">
-                            {/* <p>Hello</p> */}
-                            <h1 className="text-2xl">Create Team</h1>
-                            <span className="text-red-500 text-xl cursor-pointer" onClick={handleTeamForm}><FontAwesomeIcon icon={faTimes} /></span>
+                    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+                        <div className='absolute border border-solid rounded-md w-[50%] h-[200px] mx-auto py-2 shadow-xl bg-white'>
+                            <div className="flex justify-center px-[20px] px-auto items-center">
+                                {/* <p>Hello</p> */}
+                                <h1 className="text-2xl w-full text-center">Create Team</h1>
+                                <span className="text-red-500 text-xl cursor-pointer" onClick={handleTeamForm}><FontAwesomeIcon icon={faTimes} /></span>
+                            </div>
+                            {/* <img src={TeamMeeting} className="m-auto w-auto h-[75%] py-5" /> */}
+                            <form onSubmit={handleCreateTeam} className="mx-auto my-4">
+                                <div className="flex items-center justify-center gap-3">
+                                    <label className="pr-2 text-[16px]">Team Name</label>
+                                    <input
+                                        placeholder="Team Name"
+                                        type="text"
+                                        className="h-10 w-80 px-2 border rounded-md"
+                                        name="createTeam"
+                                        value={createTeam}
+                                        onChange={handleChange} />
+                                </div>
+                                <div className="flex items-center justify-center py-1 mt-3">
+                                    <button className="px-10 py-3 bg-red-500 rounded-md">Create</button>
+                                </div>
+                            </form>
                         </div>
-                        <img src={TeamMeeting} className="m-auto w-auto h-[75%] py-5" />
-                        <form onSubmit={handleCreateTeam} className="mx-auto">
-                            <div className="flex items-center justify-center gap-3">
-                                <label className="pr-2 text-[16px]">Team Name</label>
-                                <input
-                                    placeholder="Team Name"
-                                    type="text"
-                                    className="h-10 w-80 px-2 border rounded-md"
-                                    name="createTeam"
-                                    value={createTeam}
-                                    onChange={handleChange} />
-                            </div>
-                            <div className="flex items-center justify-center py-1">
-                                <button className="px-10 py-3 bg-red-500 rounded-md">Create</button>
-                            </div>
-                        </form>
                     </div>
                 </>)}
             </div>

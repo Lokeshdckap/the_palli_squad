@@ -43,7 +43,7 @@ const TeamsComponent = (props) => {
 
   };
 
-  console.log(teamCreateForm, "CreateTeamForm")
+  // console.log(teamCreateForm, "CreateTeamForm")
   return (
     <div>
       {!teampop ? (
@@ -51,7 +51,7 @@ const TeamsComponent = (props) => {
           <Header />
           {/* <InviteUsers closeTab={closeTab} setCloseTab={setCloseTab} handleOpenClose={handleOpenClose} /> */}
           <CreateTeamForm teamCreateForm={teamCreateForm} setTeamCreateForm={setTeamCreateForm} handleTeamForm={handleTeamForm} />
-          {!teamCreateForm && (<TeamName />)}
+          <TeamName />
         </div>
 
       ) : (

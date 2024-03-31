@@ -1,18 +1,35 @@
 import React, { useState } from "react";
 import { Table, Button, Modal } from "antd";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import invitePeople from "../../src/assets/images/addFriends.png";
 import axios from "axios";
+import TeamDrawer from "./TeamDrawer";
 
 const TeamTableComponent = ({ data }) => {
   const [closeTab, setCloseTab] = useState(false);
   const [clickedRowIndex, setClickedRowIndex] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [placement, setPlacement] = useState("");
+  const [record, setRecord] = useState("");
 
   const handleOpenClose = (index) => {
     setCloseTab(false);
     setClickedRowIndex(index);
-  }
+  };
+
+  const onClose = () => {
+    setOpen(false);
+  };
+
+  const handleRowClick = (record, e) => {
+    console.log(e.target.classList[0]);
+    if (e.target.classList[0] == "ant-table-cell") {
+      setRecord(record);
+      setOpen(true);
+      setPlacement("right");
+    }
+  };
 
   const columns = [
     {
@@ -39,7 +56,15 @@ const TeamTableComponent = ({ data }) => {
       title: "Action",
       dataIndex: "action",
       render: (text, record, index) => (
-        <Button type="primary" className="bg-red-500" onClick={() => { handleOpenClose(record.id); setCloseTab(true) }}>
+        <Button
+          type="primary"
+          className="bg-red-500"
+          id="userAdd"
+          onClick={() => {
+            handleOpenClose(record.id);
+            setCloseTab(true);
+          }}
+        >
           Add User
         </Button>
       ),
@@ -48,7 +73,18 @@ const TeamTableComponent = ({ data }) => {
 
   return (
     <>
-      <Table columns={columns} dataSource={data} bordered size="small" />
+      <Table
+        columns={columns}
+        dataSource={data}
+        rowClassName={() => "pointer-cursor"} // Adding custom class to each row
+        onRow={(record, rowIndex) => {
+          return {
+            onClick: (e) => handleRowClick(record, e), // Attaching onClick event to each row
+          };
+        }}
+        bordered
+        size="small"
+      />
       <Modal
         // title="Invite Users to Team"
         visible={closeTab}
@@ -62,6 +98,16 @@ const TeamTableComponent = ({ data }) => {
           clickedRowIndex={clickedRowIndex}
         />
       </Modal>
+      <>
+        {open && (
+          <TeamDrawer
+            placement={placement}
+            open={open}
+            onClose={onClose}
+            record={record}
+          />
+        )}
+      </>
     </>
   );
 };
@@ -70,6 +116,8 @@ const InviteUsers = ({ setCloseTab, clickedRowIndex }) => {
   const [inviteEmail, setInviteEmail] = useState("");
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [placement, setPlacement] = useState("right");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,7 +126,7 @@ const InviteUsers = ({ setCloseTab, clickedRowIndex }) => {
     } else if (name === "role") {
       setRole(value);
     }
-  }
+  };
 
   const handleInviteUsers = async (e) => {
     e.preventDefault();
@@ -86,34 +134,39 @@ const InviteUsers = ({ setCloseTab, clickedRowIndex }) => {
       toast.error("Please enter an email address");
       return;
     }
+    if(!role.trim()){
+      toast.error("Please select role");
+      return;
+    }
 
     setLoading(true);
     try {
-
-      const response = await axios.post("", { id: clickedRowIndex, email: inviteEmail, role: role })
-      console.log(response)
+      const response = await axios.post("", {
+        id: clickedRowIndex,
+        email: inviteEmail,
+        role: role,
+      });
+      console.log(response);
       toast.success("Email sent Successfully");
       setInviteEmail("");
       setRole("");
       setCloseTab(false);
-
-    }
-    catch (error) {
+    } catch (error) {
       console.error(error);
       toast.error("Failed to send invitation");
     }
     setLoading(false);
-  }
+  };
 
   return (
     <>
       <div className="relative">
-        <div className='rounded-md w-full max-w-md mx-auto py-2'>
+        {/* <div className="rounded-md w-full max-w-md mx-auto py-2"> */}
           <div className="flex justify-around items-center">
             <h1 className="text-xl">Invite users to join the team</h1>
           </div>
-          <img src={invitePeople} className="m-auto w-3/4 py-5" alt="Invite people" />
-          <form onSubmit={handleInviteUsers} className="mx-auto w-full">
+          {/* <img src={invitePeople} className="m-auto w-3/4 py-5" alt="Invite people" /> */}
+          <form onSubmit={handleInviteUsers} className="mx-auto w-full my-4">
             <div className="flex items-center justify-center gap-3">
               <label className="pr-3 text-[16px]">Email:</label>
               <input
@@ -131,16 +184,21 @@ const InviteUsers = ({ setCloseTab, clickedRowIndex }) => {
                 className="h-10 w-32 px-2 border rounded-md"
               >
                 <option value="">Select Role</option>
-                <option value="admin">Admin</option>
-                <option value="manager">Manager</option>
-                <option value="collaborator">Collaborator</option>
+                <option value="1">Admin</option>
+                <option value="2">Collaborator</option>
+                <option value="3">Viewer</option>
               </select>
-              <Button type="primary" htmlType="submit" loading={loading} className="bg-red-500">
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                className="bg-red-500"
+              >
                 {loading ? "Sending..." : "Invite"}
               </Button>
             </div>
           </form>
-        </div>
+        {/* </div> */}
       </div>
     </>
   );

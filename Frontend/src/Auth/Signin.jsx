@@ -75,7 +75,6 @@ const Signin = () => {
     axiosClient
       .post("/api/auth/verify-otp", payload)
       .then((res) => {
-        // console.log(res);
         setAuth({
           token: res.data.access,
         });
@@ -123,10 +122,10 @@ const Signin = () => {
                         required=""
                         {...register("email", {
                           required: "Email is required",
-                          pattern: {
-                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                            message: "Invalid email address",
-                          },
+                          // pattern: {
+                          //   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                          //   message: "Invalid email address",
+                          // },
                         })}
                       />
                       {errors.email && (
@@ -150,16 +149,16 @@ const Signin = () => {
                         required=""
                         {...register("password", {
                           required: "Password is required",
-                          minLength: {
-                            value: 8,
-                            message: "Password must be at least 8 characters",
-                          },
-                          pattern: {
-                            value:
-                              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-                            message:
-                              "Password must include at least one uppercase letter, one lowercase letter, one digit, and one special character",
-                          },
+                          // minLength: {
+                          //   value: 8,
+                          //   message: "Password must be at least 8 characters",
+                          // },
+                          // pattern: {
+                          //   value:
+                          //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+                          //   message:
+                          //     "Password must include at least one uppercase letter, one lowercase letter, one digit, and one special character",
+                          // },
                         })}
                       />
 
@@ -230,8 +229,8 @@ const Signin = () => {
                 className="m-auto w-96 h-80 py-5"
                 alt="Super Admin"
               />
-              <div>
-                <form onSubmit={handleFormSubmit}>
+              <div className="flex justify-center">
+                <form onSubmit={handleFormSubmit} className="w-72 flex justify-between">
                   <div className="flex space-x-10">
                     <OtpInput
                       value={otp}
@@ -239,22 +238,15 @@ const Signin = () => {
                       onChange={handleOtpChange}
                       numInputs={4}
                       renderSeparator={<span>-</span>}
-                      renderInput={(props) => (
-                        <input
-                          style={{
-                            padding: "20px", // Adjust the padding value as needed
-                            fontSize: "16px", // You can also adjust the font size if necessary
-                            width: "2em", // Adjust the width if you want larger or smaller inputs
-                          }}
-                          {...props}
-                        />
-                      )}
+                      renderInput={(props) => { 
+                        return <input class="otp" {...props} />;
+                      }}
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="bg-red-500 border h-11 px-2 text-white rounded-md ml-1"
+                    className="bg-red-600 h-10 px-2 text-white rounded-md"
                   >
                     Submit
                   </button>

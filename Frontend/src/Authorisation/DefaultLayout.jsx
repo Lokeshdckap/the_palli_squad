@@ -8,9 +8,9 @@ export default function DefaultLayout() {
   const { auth, setAuth } = useStateContext();
   const param = useParams();
 
-  // if (!auth) {
-  //   return <Navigate to="/signin" />;
-  // } else {
+  if (!auth) {
+    return <Navigate to="/signin" />;
+  } else {
     return (
       <MyContextProvider>
         <div className="flex">
@@ -24,5 +24,5 @@ export default function DefaultLayout() {
         </div>
       </MyContextProvider>
     );
-  // }
+  }
 }
