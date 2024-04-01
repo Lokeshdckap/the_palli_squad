@@ -26,6 +26,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage : storage});
 
+// const upload = multer({ dest: 'uploads/' });
+
 router.post(
   "/secret-encryption",
   upload.single('file'),
@@ -43,6 +45,18 @@ router.get("/getAllSecretsForUsers",
 verifyAuthMiddleware.verifyToken,
 secretController.getAllSecretsForUsers
 )
+
+router.put(
+  "/update-secret-encryption",
+  upload.single('file'),
+  verifyAuthMiddleware.verifyToken,
+  secretController.updateSecrets
+);
+
+router.delete("/removeSecrets/:uuid",
+verifyAuthMiddleware.verifyToken,
+secretController.removeSecrets)
+
 
 
 module.exports = router;

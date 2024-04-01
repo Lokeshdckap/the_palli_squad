@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axiosClient from "../axios-client";
-import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import { PDFDocument, StandardFonts } from "pdf-lib";
+import { saveAs } from "file-saver";
+import {
+  EyeOutlined,
+  EyeInvisibleOutlined,
+  ArrowDownOutlined,
+} from "@ant-design/icons";
 import {
   Form,
   Input,
@@ -9,6 +15,8 @@ import {
   Table,
   Typography,
   Select,
+  Upload,
+  Button,
 } from "antd";
 import SetPassword from "../Auth/SetPassword";
 import { Link, useLocation, useParams } from "react-router-dom";
@@ -34,7 +42,9 @@ const EditableCell = ({
         <Option value={1}>Super Admin</Option>
       </Select>
     ) : inputType === "file" ? (
-      <Input type="file" />
+      <Upload>
+        <Button>Upload File</Button>
+      </Upload>
     ) : (
       <Input />
     );
@@ -44,17 +54,21 @@ const EditableCell = ({
       {editing ? (
         <Form.Item
           name={dataIndex}
-          style={{
-            margin: 0,
-          }}
+          style={{ margin: 0 }}
           rules={[
             {
-              required: true,
+              required: false,
               message: `Please Input ${title}!`,
             },
           ]}
         >
-          {inputNode}
+          {dataIndex === "attachments" ? (
+            <Upload>
+              <Button>Upload File</Button>
+            </Upload>
+          ) : (
+            inputNode
+          )}
         </Form.Item>
       ) : (
         children
@@ -80,113 +94,169 @@ const SecretTable = ({
   setAuthUser,
   decryptedData,
   decryptedAttachments,
+  decryptedFileType,
+  decryptedFileName,
 }) => {
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
   const [editingKey, setEditingKey] = useState("");
-
   const [showPassword, setShowPassword] = useState(false);
   const [showAPIKey, setShowAPIKey] = useState(false);
   const [showAttachments, setShowAttachments] = useState(false);
-  const params = useParams();
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const hash_id = queryParams.get("hash_id");
 
-  const toggleVisibility = async (type) => {
-    showModal();
+  const toggleVisibility = async (type, value, record) => {
     switch (type) {
       case "password":
-        setIsModalOpen(!showPassword);
-        setShowPassword(!showPassword);
+        if (value == false) {
+          setAuthUser(false);
+        }
+        setShowPassword(value);
+        setIsModalOpen(value);
         break;
       case "apiKey":
-        setIsModalOpen(!showAPIKey);
         setShowAPIKey(!showAPIKey);
         break;
       case "attachments":
-        setIsModalOpen(!showAttachments);
-        setShowAttachments(!showAttachments);
+        if (value == false) {
+          setAuthUser(false);
+        }
+        setShowAttachments(value);
+        setIsModalOpen(value);
         break;
       default:
         break;
     }
   };
-
-  const renderContent = (text, type) => {
-    console.log(decryptedAttachments);
-    const truncatedText = text.slice(0, 10); // Truncate text to 20 characters
+  const renderContent = (text, type, record) => {
+    let truncatedText = "";
+    if (typeof text === "string" || Array.isArray(text)) {
+      truncatedText = text.slice(0, 10);
+    }
     const maskedText = "*".repeat(truncatedText.length); // Masked text with asterisks
+
     switch (type) {
       case "password":
-        return showPassword && authUser ? decryptedData : maskedText;
-      case "apiKey":
-        return showAPIKey && authUser ? truncatedText : maskedText;
+        return record.showPassword && authUser ? decryptedData : maskedText;
+      // case "apiKey":
+      //   return showAPIKey && authUser ? truncatedText : maskedText;
       case "attachments":
-        return showAttachments && authUser ? decryptedAttachments : maskedText;
+        return showAttachments && authUser
+          ? decryptedFileName
+          : maskedText
       default:
         return truncatedText; // Default behavior if type is not recognized
     }
   };
-
-  const getIcon = (type) => {
+  const getIcon = (type, record) => {
     switch (type) {
       case "password":
-        return showPassword && authUser ? (
-          <EyeOutlined
-            style={{ paddingLeft: "8px" }}
-            onClick={() => toggleVisibility("password")}
-          />
-        ) : (
-          <EyeInvisibleOutlined
-            style={{ paddingLeft: "8px" }}
-            onClick={() => toggleVisibility("password")}
-          />
-        );
-      case "apiKey":
-        return showAPIKey && authUser ? (
-          <EyeOutlined
-            style={{ paddingLeft: "8px" }}
-            onClick={() => toggleVisibility("apiKey")}
-          />
-        ) : (
-          <EyeInvisibleOutlined
-            style={{ paddingLeft: "8px" }}
-            onClick={() => toggleVisibility("apiKey")}
-          />
-        );
+        return record.showPassword && authUser
+          ? (console.log("Rendering EyeOutlined"),
+            (
+              <EyeOutlined
+                style={{ paddingLeft: "8px" }}
+                onClick={() => toggleVisibility("password", false, record)}
+              />
+            ))
+          : (console.log("Rendering EyeInvisibleOutlined"),
+            (
+              <EyeInvisibleOutlined
+                style={{ paddingLeft: "8px" }}
+                onClick={() => toggleVisibility("password", true, record)}
+              />
+            ));
+
+      // case "apiKey":
+      //   return showAPIKey && authUser ? (
+      //     <EyeOutlined
+      //       style={{ paddingLeft: "8px" }}
+      //       onClick={() => toggleVisibility("apiKey")}
+      //     />
+      //   ) : (
+      //     <EyeInvisibleOutlined
+      //       style={{ paddingLeft: "8px" }}
+      //       onClick={() => toggleVisibility("apiKey")}
+      //     />
+      //   );
 
       case "attachments":
         return showAttachments && authUser ? (
-          <EyeOutlined
-            style={{ paddingLeft: "8px" }}
-            onClick={() => toggleVisibility("attachments")}
+          <ArrowDownOutlined
+            style={{ marginLeft: "10px" }}
+            onClick={() => downloadAttachments(false)}
           />
         ) : (
           <EyeInvisibleOutlined
             style={{ paddingLeft: "8px" }}
-            onClick={() => toggleVisibility("attachments")}
+            onClick={() => toggleVisibility("attachments", true, record)}
           />
         );
       default:
         return null;
     }
   };
+  async function downloadAttachments(value) {
+    toggleVisibility("attachments", value);
+
+    if (authUser) {
+      const fileType = getFileType(decryptedFileType); // Extract file type from the file name
+
+      const uint8Array = new Uint8Array(decryptedAttachments);
+
+      const blob = new Blob([uint8Array], { type: fileType });
+      const url = URL.createObjectURL(blob);
+
+      // Create a link element and trigger the download
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = decryptedFileName;
+      link.style.display = "none"; // Hide the link element
+      document.body.appendChild(link);
+      link.click();
+      URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+
+      setAuthUser(false);
+    }
+  }
+
+  // Function to extract file type from the file name
+  const getFileType = (fileName) => {
+    const extension = fileName.split(".").pop(); // Get the file extension
+    // Map common extensions to MIME types (you may need to expand this list)
+    const mimeTypeMap = {
+      pdf: "application/pdf",
+      txt: "text/plain",
+      jpg: "image/jpeg",
+      png: "image/png",
+      docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      // Add more mappings as needed
+    };
+    // Default to octet-stream if the extension is not recognized
+    return mimeTypeMap[extension] || "application/octet-stream";
+  };
 
   useEffect(() => {
-    // Update data when existUserList changes
-    setData(
-      secret.map((secrets) => ({
-        id: secrets.uuid,
-        key: secrets.uuid,
-        username: secrets.username,
-        title: secrets.title,
-        password: secrets.password,
-        attachments: secrets.encrypted_attachment_hex,
-      }))
-    );
+    updateData();
   }, [secret]);
+
+  const updateData = () => {
+    const updatedData = secret.map((secrets) => ({
+      id: secrets.uuid,
+      key: secrets.uuid,
+      username: secrets.username,
+      title: secrets.title,
+      password: secrets.password,
+      attachments: secrets.encrypted_attachment_hex,
+      showPassword: false,
+    }));
+
+    setData(updatedData);
+  };
 
   const isEditing = (record) => record.key === editingKey;
 
@@ -214,19 +284,26 @@ const SecretTable = ({
           ...row,
         });
 
-        console.log(newData[index]);
-        // Perform POST request to update data on the server
+        const formData = new FormData();
+        formData.append(
+          "file",
+          newData[index]?.attachments?.file?.originFileObj
+        );
+        formData.append("api_key", row["api key"]);
+        formData.append("id", newData[index].id);
+        formData.append("secretData", newData[index].password);
+        formData.append("title", newData[index].title);
+        formData.append("username", newData[index].username);
 
         axiosClient
-          .put("/api/superAdmin/updateUsers", newData[index])
+          .put("/api/secrets/update-secret-encryption", formData)
           .then((response) => {
-            console.log("Update successful:", response.data);
-            setData(newData);
-            setEditingKey("");
+            console.log(response);
           })
-          .catch((error) => {
-            console.error("Error updating data:", error);
-          });
+          .catch((error) => {});
+
+        setData(newData);
+        setEditingKey("");
       } else {
         // If index is -1, it means the key was not found, handle accordingly
         console.error("Key not found in data array.");
@@ -238,9 +315,8 @@ const SecretTable = ({
 
   const remove = (key) => {
     axiosClient
-      .delete(`/api/superAdmin/existingUserRemove?uuid=${key}`)
+      .delete(`/api/secrets/removeSecrets/${key}`)
       .then((response) => {
-        console.log("deleted successful:", response.data);
         setData(newData);
         setEditingKey("");
       })
@@ -272,25 +348,8 @@ const SecretTable = ({
       editable: true,
     },
     {
-      title: "Password",
-      dataIndex: "password",
-      width: "15%",
-      editable: true,
-      ellipsis: true, // Enable ellipsis for long content
-      // render: (text) => <div style={{ maxWidth: 150 }}>{text}</div>,
-
-      render: (text, record) => (
-        <>
-          <span>{renderContent(text, "password")}</span>
-          <Link to={`/secrets/?hash_id=${record.id}`}>
-            {getIcon("password")}
-          </Link>
-        </>
-      ),
-    },
-    {
-      title: "API KEY",
-      dataIndex: "api key",
+      title: "Description",
+      dataIndex: "Description",
       width: "15%",
       editable: true,
       //   render: (text) => (
@@ -300,6 +359,22 @@ const SecretTable = ({
       //     </span>
       //   ),
     },
+    {
+      title: "Password",
+      dataIndex: "password",
+      width: "15%",
+      editable: true,
+      ellipsis: true, // Enable ellipsis for long content
+      render: (text, record) => (
+        <>
+          <span>{renderContent(text, "password", record)}</span>
+          <Link to={`/secrets/?hash_id=${record.id}`}>
+            {getIcon("password", record)}
+          </Link>
+        </>
+      ),
+    },
+
     {
       title: "Attachments",
       dataIndex: "attachments",

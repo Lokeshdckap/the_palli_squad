@@ -2,43 +2,44 @@ import React, { useState } from "react";
 import { Table, Button, Modal } from "antd";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import invitePeople from "../../src/assets/images/addFriends.png";
 import axios from "axios";
 import TeamDrawer from "./TeamDrawer";
-
-const TeamTableComponent = ({ data }) => {
+import moment from "moment";
+import "moment-timezone";
+import { formatDistanceToNow, isValid } from "date-fns";
+const TeamTableComponent = ({ teamList }) => {
   const [closeTab, setCloseTab] = useState(false);
   const [clickedRowIndex, setClickedRowIndex] = useState(null);
   const [open, setOpen] = useState(false);
-  const [placement, setPlacement] = useState("");
-  const [record, setRecord] = useState("");
+  const [record, setRecord] = useState(null); // Changed initial value to null
 
   const handleOpenClose = (index) => {
-    setCloseTab(false);
+    setCloseTab(!closeTab); // Toggle closeTab state
     setClickedRowIndex(index);
+  };
+
+  const handleRowClick = (record, e) => {
+    if (e.target.classList.contains("ant-table-cell")) {
+      // Check if the clicked element is inside the cell
+      setRecord(record);
+      setOpen(true);
+    }
   };
 
   const onClose = () => {
     setOpen(false);
   };
 
-  const handleRowClick = (record, e) => {
-    console.log(e.target.classList[0]);
-    if (e.target.classList[0] == "ant-table-cell") {
-      setRecord(record);
-      setOpen(true);
-      setPlacement("right");
-    }
-  };
-
   const columns = [
     {
       title: "S.No",
       dataIndex: "id",
+      render: (_, record, index) => index + 1,
+      editable: false,
     },
     {
       title: "Team name",
-      dataIndex: "team_name",
+      dataIndex: "name",
     },
     {
       title: "Member count",
@@ -46,11 +47,33 @@ const TeamTableComponent = ({ data }) => {
     },
     {
       title: "Created At",
-      dataIndex: "created_at",
+      dataIndex: "createdAt",
+      render: (createdAt) => {
+        let formattedTime = ""; // Initialize formattedTime variable
+
+        if (isValid(new Date(createdAt))) {
+          formattedTime = formatDistanceToNow(new Date(createdAt), {
+            addSuffix: true,
+          });
+        }
+
+        return <span>{formattedTime}</span>;
+      },
     },
     {
       title: "Updated At",
-      dataIndex: "updated_at",
+      dataIndex: "updatedAt",
+      render: (updatedAt) => {
+        let formattedTime = ""; // Initialize formattedTime variable
+
+        if (isValid(new Date(updatedAt))) {
+          formattedTime = formatDistanceToNow(new Date(updatedAt), {
+            addSuffix: true,
+          });
+        }
+
+        return <span>{formattedTime}</span>;
+      },
     },
     {
       title: "Action",
@@ -75,21 +98,18 @@ const TeamTableComponent = ({ data }) => {
     <>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={teamList}
         rowClassName={() => "pointer-cursor"} // Adding custom class to each row
-        onRow={(record, rowIndex) => {
-          return {
-            onClick: (e) => handleRowClick(record, e), // Attaching onClick event to each row
-          };
-        }}
+        onRow={(record) => ({
+          onClick: (e) => handleRowClick(record, e), // Attaching onClick event to each row
+        })}
         bordered
         size="small"
       />
       <Modal
-        // title="Invite Users to Team"
         visible={closeTab}
         footer={null}
-        onCancel={handleOpenClose}
+        onCancel={() => setCloseTab(false)} // Close the modal by toggling closeTab
       >
         <InviteUsers
           closeTab={closeTab}
@@ -98,26 +118,27 @@ const TeamTableComponent = ({ data }) => {
           clickedRowIndex={clickedRowIndex}
         />
       </Modal>
-      <>
-        {open && (
-          <TeamDrawer
-            placement={placement}
-            open={open}
-            onClose={onClose}
-            record={record}
-          />
-        )}
-      </>
+      {open && record && (
+        <TeamDrawer
+          placement="right"
+          open={open}
+          onClose={onClose}
+          record={record}
+        />
+      )}
     </>
   );
 };
 
-const InviteUsers = ({ setCloseTab, clickedRowIndex }) => {
+const InviteUsers = ({
+  closeTab,
+  handleOpenClose,
+  setCloseTab,
+  clickedRowIndex,
+}) => {
   const [inviteEmail, setInviteEmail] = useState("");
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [placement, setPlacement] = useState("right");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -130,8 +151,13 @@ const InviteUsers = ({ setCloseTab, clickedRowIndex }) => {
 
   const handleInviteUsers = async (e) => {
     e.preventDefault();
+
     if (!inviteEmail.trim()) {
       toast.error("Please enter an email address");
+      return;
+    }
+    if (!role) {
+      toast.error("Please assign the role");
       return;
     }
 
@@ -158,42 +184,44 @@ const InviteUsers = ({ setCloseTab, clickedRowIndex }) => {
     <>
       <div className="relative">
         {/* <div className="rounded-md w-full max-w-md mx-auto py-2"> */}
-          <div className="flex justify-around items-center">
-            <h1 className="text-xl">Invite users to join the team</h1>
+        <div className="flex justify-around items-center">
+          <h1 className="text-xl">Invite users to join the team</h1>
+        </div>
+        {/* <img src={invitePeople} className="m-auto w-3/4 py-5" alt="Invite people" /> */}
+        <form onSubmit={handleInviteUsers} className="mx-auto w-full my-4">
+          <div className="flex items-center justify-center gap-3">
+            <label className="pr-3 text-[16px]">Email:</label>
+            <input
+              placeholder="Enter Email"
+              type="email"
+              className="h-10 w-60 px-2 border rounded-md"
+              name="email"
+              value={inviteEmail}
+              onChange={handleChange}
+            />
+            <select
+              value={role}
+              onChange={handleChange}
+              name="role"
+              className="h-10 w-32 px-2 border rounded-md"
+            >
+              <option value="" disabled>
+                Select Role
+              </option>
+              <option value="1">Admin</option>
+              <option value="2">Collaborator</option>
+              <option value="3">Viewer</option>
+            </select>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              className="bg-red-500"
+            >
+              {loading ? "Sending..." : "Invite"}
+            </Button>
           </div>
-          {/* <img src={invitePeople} className="m-auto w-3/4 py-5" alt="Invite people" /> */}
-          <form onSubmit={handleInviteUsers} className="mx-auto w-full my-4">
-            <div className="flex items-center justify-center gap-3">
-              <label className="pr-3 text-[16px]">Email:</label>
-              <input
-                placeholder="Enter Email"
-                type="email"
-                className="h-10 w-60 px-2 border rounded-md"
-                name="email"
-                value={inviteEmail}
-                onChange={handleChange}
-              />
-              <select
-                value={role}
-                onChange={handleChange}
-                name="role"
-                className="h-10 w-32 px-2 border rounded-md"
-              >
-                <option value="">Select Role</option>
-                <option value="1">Admin</option>
-                <option value="2">Collaborator</option>
-                <option value="3">Viewer</option>
-              </select>
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={loading}
-                className="bg-red-500"
-              >
-                {loading ? "Sending..." : "Invite"}
-              </Button>
-            </div>
-          </form>
+        </form>
         {/* </div> */}
       </div>
     </>
