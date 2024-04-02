@@ -40,7 +40,8 @@ export const SideBarComponent = ({ param }) => {
               Secrets
             </p>
           </div>
-          {/* {userDetail?.role_type === 1 && (
+
+          {userDetail?.role_type === 1 && (
             <div
               className={` w-[100%] m-auto rounded-sm ${
                 adminList === "/admin" && ""
@@ -65,7 +66,7 @@ export const SideBarComponent = ({ param }) => {
                     marginLeft: "20px",
                   }}
                 >
-                  <Link to={"/admin/existingUsers"}>
+                  <Link to={"/admin/existingUsers"} onClick={(e) => e.stopPropagation()}>
                     <div
                       className={`hover:bg-[#7d8285] w-[100%] m-auto pl-5 my-1 rounded-sm ${
                         window.location.pathname === "/admin/existingUsers" &&
@@ -77,7 +78,7 @@ export const SideBarComponent = ({ param }) => {
                       </p>
                     </div>
                   </Link>
-                  <Link to={"/admin/pendingList"}>
+                  <Link to={"/admin/pendingList"} onClick={(e) => e.stopPropagation()}>
                     <div
                       className={`hover:bg-[#7d8285] w-[100%] m-auto pl-5 mx-1 rounded-sm ${
                         window.location.pathname === "/admin/pendingList" &&
@@ -92,8 +93,8 @@ export const SideBarComponent = ({ param }) => {
                 </div>
               )}
             </div>
-          )} */}
-          <div
+          )} 
+          {/* <div
             className={`hover:bg-[#7d8285] w-[100%] m-auto rounded-sm ${
               adminList == "/admin" && "bg-[#7d8285]"
             } `}
@@ -109,8 +110,8 @@ export const SideBarComponent = ({ param }) => {
                 )}
               </span>
             </p>
-          </div>
-          {adminList && (
+          </div> */}
+          {/* {adminList && (
             <div
               className=""
               style={{
@@ -143,9 +144,7 @@ export const SideBarComponent = ({ param }) => {
                 </div>
               </Link>
             </div>
-          )}{" "}
-          {/* </Link> */}
-          {/* <Link to={"/teams"}> */}
+          )}{" "} */}
           <div
             className={`hover:bg-[#7d8285] w-[100%] m-auto rounded-sm my-2 ${
               window.location.pathname == "/teams" && "bg-[#7d8285]"
@@ -156,7 +155,6 @@ export const SideBarComponent = ({ param }) => {
               Teams
             </p>
           </div>
-          {/* </Link> */}
         </div>
       </div>
     </div>

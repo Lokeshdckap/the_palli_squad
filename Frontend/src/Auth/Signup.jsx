@@ -179,6 +179,7 @@ const Signup = () => {
                           placeholder="password"
                           className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           required=""
+                          autocomplete="off"
                           {...register("password", {
                             required: "Password is required",
                             minLength: {
@@ -231,6 +232,7 @@ const Signup = () => {
                         placeholder="confirm-password"
                         className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         required=""
+                        autocomplete="off"
                         {...register("confirmPassword", {
                           required: "Confirm Password is required",
                           validate: (value) =>
@@ -263,7 +265,7 @@ const Signup = () => {
                   <button
                     style={{ width: "100%" }}
                     type="submit"
-                    className=" text-gray-900 bg-white border border-gray-300 pt-2 focus:outline-none hover:bg-gray-700  w-[100rem] font-medium rounded-lg text-sm px-5 py-2  dark:bg-gray-800 dark:text-white dark:border-gray-600 "
+                    className=" text-white bg-slate-800 border border-gray-300 focus:outline-none hover:bg-slate-900  w-[100rem] font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:text-white dark:border-gray-600 "
                   >
                     create an account
                   </button>
@@ -272,7 +274,7 @@ const Signup = () => {
                     Already have an account?{" "}
                     <Link
                       to={"/signin"}
-                      className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                      className="font-medium text-slate-700 hover:underline"
                     >
                       Login here
                     </Link>

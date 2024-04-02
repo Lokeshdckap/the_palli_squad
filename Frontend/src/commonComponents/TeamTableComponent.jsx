@@ -130,13 +130,12 @@ const InviteUsers = ({ setCloseTab, clickedRowIndex }) => {
 
   const handleInviteUsers = async (e) => {
     e.preventDefault();
-
     if (!inviteEmail.trim()) {
       toast.error("Please enter an email address");
       return;
     }
-    if (role == "") {
-      toast.error("Please assign the role");
+    if(!role.trim()){
+      toast.error("Please select role");
       return;
     }
 
@@ -184,7 +183,7 @@ const InviteUsers = ({ setCloseTab, clickedRowIndex }) => {
                 name="role"
                 className="h-10 w-32 px-2 border rounded-md"
               >
-                <option value="" disabled>Select Role</option>
+                <option value="">Select Role</option>
                 <option value="1">Admin</option>
                 <option value="2">Collaborator</option>
                 <option value="3">Viewer</option>

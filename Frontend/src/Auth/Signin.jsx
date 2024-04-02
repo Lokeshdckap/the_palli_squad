@@ -6,6 +6,7 @@ import superAdmin from "../assets/images/adminAccess.png";
 import image from "../assets/images/OTP.png";
 import { useStateContext } from "../context/ContextProvider";
 import HashLoader from "react-spinners/HashLoader";
+import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 
 import axiosClient from "../axios-client";
 
@@ -29,6 +30,8 @@ const Signin = () => {
   const [errMessage, setErrMessage] = useState("");
   const [otpValue, setOtpValue] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
 
   // ----------------Handling form visibilty an hidden-------------------------------------
   const handleButton = () => {
@@ -75,7 +78,6 @@ const Signin = () => {
     axiosClient
       .post("/api/auth/verify-otp", payload)
       .then((res) => {
-        // console.log(res);
         setAuth({
           token: res.data.access,
         });
@@ -123,10 +125,10 @@ const Signin = () => {
                         required=""
                         {...register("email", {
                           required: "Email is required",
-                          // pattern: {
-                          //   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                          //   message: "Invalid email address",
-                          // },
+                          pattern: {
+                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                            message: "Invalid email address",
+                          },
                         })}
                       />
                       {errors.email && (
@@ -135,7 +137,7 @@ const Signin = () => {
                         </span>
                       )}
                     </div>
-                    <div>
+                    <div className="relative">
                       <label
                         for="password"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -143,25 +145,31 @@ const Signin = () => {
                         Password
                       </label>
                       <input
-                        // type={showPassword ? "text" : "password"}
+                        type={showPassword ? "text" : "password"}
                         id="password"
                         placeholder="password"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2"
                         required=""
+                        autocomplete="off"
                         {...register("password", {
                           required: "Password is required",
-                          // minLength: {
-                          //   value: 8,
-                          //   message: "Password must be at least 8 characters",
-                          // },
-                          // pattern: {
-                          //   value:
-                          //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-                          //   message:
-                          //     "Password must include at least one uppercase letter, one lowercase letter, one digit, and one special character",
-                          // },
                         })}
                       />
+                      <p
+                        className="absolute top-9 right-3 cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                        id="eye"
+                      >
+                        {showPassword ? (
+                          <EyeOutlined
+                            style={{ fontSize: "16px", color: "#595959" }}
+                          />
+                        ) : (
+                          <EyeInvisibleOutlined
+                            style={{ fontSize: "16px", color: "#595959" }}
+                          />
+                        )}
+                      </p>
 
                       {errors.password && (
                         <span className="text-red-500 text-sm">
@@ -173,11 +181,11 @@ const Signin = () => {
                       <Button givenName={"Signin"} type="submit" />
                     </>
                   </form>{" "}
-                  <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+                  <p class="text-sm font-light text-gray-500 dark:text-gray-400 text-center">
                     Already have an account?{" "}
                     <Link
                       to={"/signup"}
-                      class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                      class="font-medium text-slate-700 hover:underline"
                     >
                       Signup here
                     </Link>
@@ -230,8 +238,11 @@ const Signin = () => {
                 className="m-auto w-96 h-80 py-5"
                 alt="Super Admin"
               />
-              <div>
-                <form onSubmit={handleFormSubmit}>
+              <div className="flex justify-center">
+                <form
+                  onSubmit={handleFormSubmit}
+                  className="w-72 flex justify-between"
+                >
                   <div className="flex space-x-10">
                     <OtpInput
                       value={otp}
@@ -239,22 +250,15 @@ const Signin = () => {
                       onChange={handleOtpChange}
                       numInputs={4}
                       renderSeparator={<span>-</span>}
-                      renderInput={(props) => (
-                        <input
-                          style={{
-                            padding: "20px", // Adjust the padding value as needed
-                            fontSize: "16px", // You can also adjust the font size if necessary
-                            width: "2em", // Adjust the width if you want larger or smaller inputs
-                          }}
-                          {...props}
-                        />
-                      )}
+                      renderInput={(props) => {
+                        return <input class="otp" {...props} />;
+                      }}
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="bg-red-500 border h-11 px-2 text-white rounded-md ml-1"
+                    className="bg-red-600 h-10 px-2 text-white rounded-md"
                   >
                     Submit
                   </button>
@@ -272,15 +276,15 @@ const Signin = () => {
           </div>
         )}
         {loading && (
-            <>
-              <div className="bg-[#aeaeca] opacity-[0.5] w-[100%] h-[100vh] absolute top-0 left-0  z-10"></div>
-              <div className="">
-                <p className="absolute top-[48%] left-[48%] z-50 ">
-                  <HashLoader color="#3197e8" />
-                </p>
-              </div>
-            </>
-          )}
+          <>
+            <div className="bg-[#aeaeca] opacity-[0.5] w-[100%] h-[100vh] absolute top-0 left-0  z-10"></div>
+            <div className="">
+              <p className="absolute top-[48%] left-[48%] z-50 ">
+                <HashLoader color="#3197e8" />
+              </p>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faEye, faEyeSlash, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faEye, faEyeSlash, faTimes, faL } from '@fortawesome/free-solid-svg-icons';
 import CryptoJS from "crypto-js";
 import Password from 'antd/es/input/Password';
 import { toast } from 'react-toastify';
@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axiosClient from '../axios-client';
 import { useNavigate } from 'react-router-dom';
 
-export default function SecretStoreForm({ closeStoreTab, setCloseStoreTab }) {
+export default function StoreSecretForm(props) {
 
     const [apiPairs, setApiPairs] = useState([{ apiKey: '', apiValue: '' }])
     // const [selectedFile, setSelectedFile] = useState(null);
@@ -17,6 +17,7 @@ export default function SecretStoreForm({ closeStoreTab, setCloseStoreTab }) {
     // const [decryptedData, setDecryptedData] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showApiValue, setShowApiValue] = useState(apiPairs && apiPairs.length > 0 ? Array(apiPairs.length).fill(false) : []);
+    const [formVisible, setFormVisible] = useState(true)
 
     const [formData, setFormData] = useState({
         title: "",
@@ -104,26 +105,38 @@ export default function SecretStoreForm({ closeStoreTab, setCloseStoreTab }) {
     }
 
     const handleClick = () => {
-        setCloseStoreTab(false)
+        props.setSecretForm(false)
+        setFormVisible(false)
+        // setCloseStoreTab(false)
         setFormData("")
         setApiPairs([{}])
     }
+    // export default function StoreSecretForm(props) {
+    // Existing code...
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const isPassword = formData.password.trim() !== "";
         const isAnyApiPair = apiPairs.some(pair => pair.apiKey.trim() !== "" && pair.apiValue.trim() !== "");
+
         try {
-            const encryptStorePassword = encryptPassword(formData.password)
-            const apikeysAndValues = encryptApiPairs(apiPairs)
+            if (!isPassword && !isAnyApiPair) {
+                throw new Error('Need to store at least one secret');
+            }
+
+            const encryptStorePassword = encryptPassword(formData.password);
+            const apikeysAndValues = encryptApiPairs(apiPairs);
             const { password, ...rest } = formData;
-            const formDetails = rest
-            const storeSecrets = [formDetails, encryptStorePassword, apikeysAndValues]
+            const formDetails = rest;
+            const teamId = props.record; //teamId because if the admin created from the team
+            const storeSecrets = [formDetails, encryptStorePassword, apikeysAndValues, teamId];
             // console.log(storeSecrets,"storeSecrets")
-            const response = await axiosClient.post('', storeSecrets);
-            console.log(response);
-            navigate("/secrets");
-            setCloseStoreTab(false);
+            // Submit data and handle response (commented for now)
+            // const response = await axiosClient.post('', storeSecrets);
+            // console.log(response);
+            // navigate('/teams')
+            setFormVisible(false)
             setFormData({
                 title: "",
                 userName: "",
@@ -133,22 +146,15 @@ export default function SecretStoreForm({ closeStoreTab, setCloseStoreTab }) {
             });
             setApiPairs([{ apiKey: '', apiValue: '' }]);
             toast.success("Successfully stored");
-
+        } catch (err) {
+            toast.error(err.message);
         }
-        catch (err) {
-            if (!isPassword && !isAnyApiPair) {
-                toast.error('Need to be store atleast one secret')
-            }
-        }
-
     };
 
 
-    // console.log(closeStoreTab, "closeStoreTab")
     return (
-        <div>
-            {/* <Header /> */}
-            {closeStoreTab && (
+        <>
+            {formVisible && (
                 <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
                     <div className="flex justify-center items-center mt-[10px]">
                         <div className="border bg-white px-6 py-2 shadow-inner rounded-md">
@@ -180,10 +186,10 @@ export default function SecretStoreForm({ closeStoreTab, setCloseStoreTab }) {
                                                 <input type={showApiValue[index] ? "text" : "password"} placeholder="API Value" name='apiValue' value={pair.apiValue} className="pl-[5px] py-2 border rounded-md" onChange={(e) => handleMultipleInputs(e.target.value, index, 'apiValue')} />
                                                 <FontAwesomeIcon icon={showApiValue[index] ? faEyeSlash : faEye} onClick={() => handleEyeIcon(index, "apiValue")} className='absolute right-3 top-4 cursor-pointer' />
                                             </div>
-                                            <button onClick={(e) => { e.preventDefault(); handleDeleteClick(index) }} className='bg-red-500 py-2 px-3 rounded-md text-white'>Delete</button>
+                                            <button onClick={(e) => { e.preventDefault(); handleDeleteClick(index) }} className='bg-red-500 py-2 px-3 rounded-md'>Delete</button>
                                             {index === apiPairs.length - 1 && (
                                                 <div className="flex items-center gap-3">
-                                                    <p className='bg-green-500 py-2 px-3 rounded-md text-white' onClick={handleApiPair}>
+                                                    <p className='bg-green-500 py-2 px-3 rounded-md' onClick={handleApiPair}>
                                                         Add<FontAwesomeIcon className="" icon={faPlus} />
                                                     </p>
                                                 </div>
@@ -196,13 +202,13 @@ export default function SecretStoreForm({ closeStoreTab, setCloseStoreTab }) {
                                     <input type='file' name='file' onChange={handleFileChange} accept='.txt, .doc, .pdf, .docx' />
                                 </div>
                                 <div className='text-center'>
-                                    <button type='submit' className='bg-red-600 py-2 px-6 rounded-md text-white'>Submit</button>
+                                    <button type='submit' className='bg-red-500 py-2 px-5 rounded-md'>Submit</button>
                                 </div>
                             </form>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
-    );
+                </div>)}
+
+        </>
+    )
 }

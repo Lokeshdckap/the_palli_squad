@@ -1,0 +1,12 @@
+﻿1. Modified the add batch functionality.
+2. The task badge hardcoded removed and due date minutes calculations issue fixed.
+3. For student work show view added a useEffect.
+4. When student assigned the loading message added.
+5. If the current batch don’t a student the placeholder added.
+6. The comments profile icon name firstname and lastname hardcoded removed and also added the current date and time for the comment.
+7. In the weightage list component added the minimum and maximum attribute and the value converted to the float because the backend team gives the percentage as a string that’s why I am using that float ex: Percentage: “50.00” using a float to convert the string value into a float so the output will be 50.
+8. In the weightage list component the percentage input increment and decrement spin button removed by using CSS.
+9. The user info get the endpoint I wrote the one utility function that function used for login and sidebar component.
+10. Permission functionality added in application page. 
+11. The task badge hardcoded removed and due date minutes calculations issue fixed in student login.
+12. Removed the unwanted console.log and navbar component removed.
