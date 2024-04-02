@@ -7,7 +7,7 @@ import { useMyContext } from "../context/AppContext";
 const Dashboard = () => {
   const { userInfo, userDetail } = useMyContext();
 
-    // console.log(userInfo);
+    console.log(userInfo);
   
   const navigate = useNavigate();
   useEffect(() => {

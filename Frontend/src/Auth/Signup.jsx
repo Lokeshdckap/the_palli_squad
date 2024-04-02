@@ -74,7 +74,7 @@ const Signup = () => {
           <div className="flex flex-col items-center justify-center mx-auto md:h-screen lg:py-0">
             <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
               <div className="space-y-0.5 md:space-y-4 sm:p-5 ">
-                <h2 className="text-xl mb-1  font-bold leading-tight tracking-tight  md:text-2xl dark:text-white">
+                <h2 className="text-xl mb-1  font-bold leading-tight tracking-tight  md:text-2xl dark:text-white text-center">
                   Create an account
                 </h2>
                 <form

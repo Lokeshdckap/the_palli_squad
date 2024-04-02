@@ -20,13 +20,16 @@ export const SideBarComponent = ({ param }) => {
   return (
     <div className="bg-slate-950 w-[200px]  h-screen">
       <div>
-        <div className="flex gap-4 mx-3 pt-4" >
+        <div className="flex items-center gap-4 mx-3 pt-4" >
           <img
             src="https://i.postimg.cc/mDrRnHY3/shield.png"
             alt=""
-            className="h-8 text-[#F9EFD4] cursor-pointer"
+            className="h-10 text-[#F9EFD4] cursor-pointer"
           />
-          <p className="text-white text-[22px] font-semibold" >Vault</p>
+          <div>
+          <p className="text-white text-[18px] font-semibold" >DCKAP</p>
+          <p className="text-white text-[14px] font-medium" >Vault</p>
+          </div>
         </div>
 
         <div className="pt-3 w-[180px] m-auto">

@@ -10,7 +10,8 @@ export default function DefaultLayout() {
 
   if (!auth) {
     return <Navigate to="/signin" />;
-  } else {
+  } 
+  else {
     return (
       <MyContextProvider>
         <div className="flex">

@@ -202,7 +202,7 @@ export default function StoreSecrets() {
                             <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} onClick={handleEyeIcon} className='absolute right-3 top-4 cursor-pointer' />
                         </div>
                     </div>
-                    <div className="flex flex-col py-3 gap-3">
+                    {/* <div className="flex flex-col py-3 gap-3">
                         {apiPairs.map((pair, index) => (
                             <div key={index} className="flex gap-3 items-center">
                                 <label>Api Key</label>
@@ -219,7 +219,7 @@ export default function StoreSecrets() {
                                 )}
                             </div>
                         ))}
-                    </div>
+                    </div> */}
                     <input 
                         type='file' 
                         onChange={handleFileChange}
