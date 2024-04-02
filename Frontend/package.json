@@ -18,6 +18,8 @@
     "file-saver": "^2.0.5",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.45",
+    "jszip": "^3.10.1",
+    "jszip-utils": "^0.1.0",
     "nodemon": "^3.0.3",
     "pdf-lib": "^1.17.1",
     "react": "^18.2.0",
