@@ -12,6 +12,8 @@ import GetPasswordPopover from "../../src/commonComponents/GetPasswordPopover";
 import axiosClient from "../axios-client";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import HashLoader from "react-spinners/HashLoader";
+
 
 const Signup = () => {
   const {
@@ -27,31 +29,37 @@ const Signup = () => {
 
   const [api, contextHolder] = notification.useNotification();
 
-  const openNotificationWithIcon = (type) => {
-    console.log("dfjdsf");
-    api[type]({
-      message: 'Notification Title',
-      description:
-        'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
-    });
-  };
+  const [loading, setLoading] = useState(false);
+
+
+  // const openNotificationWithIcon = (type) => {
+  //   console.log("dfjdsf");
+  //   api[type]({
+  //     message: 'Notification Title',
+  //     description:
+  //       'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+  //   });
+  // };
   const navigate = useNavigate();
 
 
   const handleSignup = (data) => {
-    console.log(data);
+    // console.log(data);
+    setLoading(true);
 
     axiosClient
       .post("/api/auth/register", data)
       .then((res) => {
         console.log(res);
         navigate("/emailverify");
+        setLoading(false);
       })
       .catch((err) => {
         const response = err.response;
         if (response && response?.status === 400) {
           // showToastMessage(response.data);
-          openNotificationWithIcon('success')
+          // openNotificationWithIcon('success');
+          setLoading(false);
         } else {
           console.error("Error:", response?.status);
         }
@@ -269,7 +277,7 @@ const Signup = () => {
                       Login here
                     </Link>
                   </p>
-                  <Button onClick={() => openNotificationWithIcon('success')}>Success</Button>
+                  {/* <Button onClick={() => openNotificationWithIcon('success')}>Success</Button> */}
 
                 </form>
               </div>
@@ -278,6 +286,16 @@ const Signup = () => {
         </section>
         <ToastContainer />
 
+        {loading && (
+            <>
+              <div className="bg-[#aeaeca] opacity-[0.5] w-[100%] h-[100vh] absolute top-0 left-0  z-10"></div>
+              <div className="">
+                <p className="absolute top-[48%] left-[48%] z-50 ">
+                  <HashLoader color="#3197e8" />
+                </p>
+              </div>
+            </>
+          )}
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { Header } from "../Header/Header";
 import { useLocation, useParams } from "react-router-dom";
 import axiosClient from "../axios-client";
 import SecretTable from "../commonComponents/SecretTable";
-import SecretsTableComponent from "../commonComponents/SecretsTable"
+import SecretsTableComponent from "../commonComponents/SecretsTable";
 import SecretStoreForm from "./SecretStoreForm";
 export const SecretComponent = () => {
   const params = useParams();
@@ -13,7 +13,10 @@ export const SecretComponent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [authUser, setAuthUser] = useState(false);
   const [decryptedData, setDecryptedData] = useState("");
-  const [decryptedAttachments, setDecryptedAttachments] = useState("");
+  const [decryptedAttachments, setDecryptedAttachments] = useState([]);
+  const [decryptedFileType, setDecryptedFileType] = useState("");
+  const [decryptedFileName, setDecryptedFileName] = useState("");
+
   const [closeStoreTab, setCloseStoreTab] = useState(false);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -84,16 +87,16 @@ export const SecretComponent = () => {
       await axiosClient
         .get(`/api/secrets/secret-decryption/${hash_id}`)
         .then((res) => {
-          console.log(res.data.file);
           if (res.status == 200) {
             if (res.data.deryptionData) {
               setDecryptedData(res.data.deryptionData);
             }
             if (res.data.file) {
-              setDecryptedAttachments(res.data.file);
+              setDecryptedFileType(res.data.encryptedFileType);
+              setDecryptedFileName(res.data.encryptedFileName);
+              setDecryptedAttachments(res.data.file.data)
             }
           }
-          // setAuthUser(false);
         })
         .catch((error) => {
           console.log(error);
@@ -105,42 +108,53 @@ export const SecretComponent = () => {
   };
   return (
     <>
-    <div>
-      <Header />
       <div>
-      {!closeStoreTab && (
-        <div className="flex justify-between p-2 items-center">
-          <p className="text-2xl ">Secrets</p>
-          <button className="px-10 py-3 bg-red-500 rounded-md text-[16px]" onClick={() => { setCloseStoreTab(true) }}>Add+</button>
+        <Header />
+        <div>
+          {!closeStoreTab && (
+            <div className="flex justify-between p-2">
+              <p className="text-2xl">Secrets</p>
+              <button
+                className="px-8 py-2 bg-red-600 rounded-md text-[16px] text-white"
+                onClick={() => {
+                  setCloseStoreTab(true);
+                }}
+              >
+                Add+
+              </button>
+            </div>
+          )}
+          <SecretTable
+            secret={secrets}
+            setPassword={setPassword}
+            password={password}
+            handleInputChange={handleInputChange}
+            handleSubmit={handleSubmit}
+            setError={setError}
+            error={error}
+            showModal={showModal}
+            handleOk={handleOk}
+            handleCancel={handleCancel}
+            setIsModalOpen={setIsModalOpen}
+            isModalOpen={isModalOpen}
+            authUser={authUser}
+            setAuthUser={setAuthUser}
+            decryptedData={decryptedData}
+            decryptedAttachments={decryptedAttachments}
+            decryptedFileType={decryptedFileType}
+            decryptedFileName={decryptedFileName}
+          />
         </div>
-      )}
-        <SecretTable
-          secret={secrets}
-          setPassword={setPassword}
-          password={password}
-          handleInputChange={handleInputChange}
-          handleSubmit={handleSubmit}
-          setError={setError}
-          error={error}
-          showModal={showModal}
-          handleOk={handleOk}
-          handleCancel={handleCancel}
-          setIsModalOpen={setIsModalOpen}
-          isModalOpen={isModalOpen}
-          authUser={authUser}
-          setAuthUser={setAuthUser}
-          decryptedData={decryptedData}
-          decryptedAttachments={decryptedAttachments}
-        />
+        <div>
+          {/* {!closeStoreTab && (<SecretsTableComponent />)} */}
+
+          <SecretStoreForm
+            closeStoreTab={closeStoreTab}
+            setCloseStoreTab={setCloseStoreTab}
+            getAllSecretsForUsers={getAllSecretsForUsers}
+          />
+        </div>
       </div>
-      <div>
-   
-
-      {/* {!closeStoreTab && (<SecretsTableComponent />)} */}
-
-      <SecretStoreForm closeStoreTab={closeStoreTab} setCloseStoreTab={setCloseStoreTab} />
-    </div>
-    </div>
     </>
-
-      )}
+  );
+};

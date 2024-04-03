@@ -32,6 +32,7 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
+
 const apiBasePath = "/api";
 
 const authRoute = require("./routes/authentication");
