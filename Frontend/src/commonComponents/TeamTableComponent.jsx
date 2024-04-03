@@ -100,13 +100,13 @@ const TeamTableComponent = ({ teamList }) => {
       title: "Action",
       dataIndex: "action",
       render: (text, record, index) => {
-        if (record.role_type == 3) {
+        if (record.role_type == 3 || record.role_type == 2) {
           return (
             <Button
               type="primary"
               className="bg-red-500"
               disabled // Disable the button
-            >
+            > 
               Add User
             </Button>
           );
@@ -160,6 +160,7 @@ const TeamTableComponent = ({ teamList }) => {
           open={open}
           onClose={onClose}
           record={record}
+          assignRole={assignRole}
         />
       )}
     </>

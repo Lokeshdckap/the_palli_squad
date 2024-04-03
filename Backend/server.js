@@ -47,6 +47,8 @@ const inviteRoute = require("./routes/invite");
 
 const secretRoute = require("./routes/secrets");
 
+const shareRoute = require("./routes/share")
+
 app.use(`${apiBasePath}/auth`, authRoute);
 
 app.use(`${apiBasePath}/superAdmin`, superAdminRoute);
@@ -58,6 +60,8 @@ app.use(`${apiBasePath}/teams`, teamRoute);
 app.use(`${apiBasePath}/invites`, inviteRoute);
 
 app.use(`${apiBasePath}/secrets`, secretRoute);
+
+app.use(`${apiBasePath}/shares`, shareRoute);
 
 
 app.set("views", path.join(__dirname, "views"));

@@ -103,9 +103,9 @@ const createTeams = async (req, res) => {
   };
 
   const activeUserRemove = async (req, res) => {
-    const user_uuid = req.body.uuid;
+    const user_uuid = req.query.uuid;
   
-    const team_uuid = req.body.team_uuid;
+    const team_uuid = req.query.team_uuid;
     const userFind = await User.findOne({
       where: {
         uuid: user_uuid,

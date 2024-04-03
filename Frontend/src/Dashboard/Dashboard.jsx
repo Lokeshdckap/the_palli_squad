@@ -11,7 +11,7 @@ const Dashboard = () => {
   
   const navigate = useNavigate();
   useEffect(() => {
-    navigate("/secrets");
+    navigate("/teams");
   }, []);
   return (
     <>

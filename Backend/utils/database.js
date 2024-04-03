@@ -52,6 +52,9 @@ db.secret = require("../models/secrets")(sequelize, DataTypes);
 db.pass_pharse = require("../models/pass_pharse")(sequelize, DataTypes);
 
 
+db.shares = require("../models/shares")(sequelize, DataTypes);
+
+
 db.users.hasMany(db.user_team_members, {
   foreignKey: "user_uuid",
   sourceKey: "uuid",

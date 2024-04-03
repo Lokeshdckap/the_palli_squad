@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Header } from "../Header/Header";
 import { useParams } from "react-router-dom";
-import  ExistingUsers from "./ExistingUser.jsx/ExistingUsers";
+import ExistingUsers from "./ExistingUser.jsx/ExistingUsers";
 import { PendingAuthUser } from "./PendingAuthUsers/PendingAuthUser";
 import axiosClient from "../axios-client";
 import { useMyContext } from "../context/AppContext";
@@ -18,21 +18,8 @@ export const AdminComponent = () => {
 
       .then((res) => {
         console.log(res.data);
-        // const algorithm = "aes-256-cbc";
-        // const key = crypto.randomBytes(32); // Use the same key generated on the server
-        // const iv = Buffer.from(res.data.iv, "hex");
 
-        // const decipher = crypto.createDecipheriv(algorithm, key, iv);
-        // let decryptedData = decipher.update(
-        //   res.data.encryptedData,
-        //   "hex",
-        //   "utf-8"
-        // );
-        // decryptedData += decipher.final("utf-8");
-
-        // console.log(decryptedData);
-
-        // setExistUserList(decodedData.users);
+        setExistUserList(res.data.users);
       })
       .catch((err) => {
         console.log(err);

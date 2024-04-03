@@ -19,7 +19,7 @@ router.post(
   inviteController.updateInvite
 );
 
-router.post(
+router.put(
   "/updateRole",
   verifyAuthMiddleware.verifyToken,
   inviteController.updateRole

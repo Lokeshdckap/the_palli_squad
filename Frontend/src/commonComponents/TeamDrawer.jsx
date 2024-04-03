@@ -1,29 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Drawer, Radio, Space } from 'antd';
-import StoreSecretForm from './storeSecretForm';
-import axiosClient from '../axios-client';
-import TableUserComponent from './TableUserComponent';
+import React, { useState, useEffect } from "react";
+import { Button, Drawer, Radio, Space } from "antd";
+import TableUserComponent from "./TableUserComponent";
+import SecretStoreForm from "./SecretStoreForm";
 
-const TeamDrawer = ({ open, onClose, record }) => {
-  const [addEdit, setAddEdit] = useState(false);
+const TeamDrawer = ({ open, onClose, record,assignRole }) => {
   const [secretForm, setSecretForm] = useState(false);
-  const [addPassword, setAddPassword] = useState(false);
 
-
-  const handleAccess = (record) => {
-    if (record.role_type == 1) {
-      setAddEdit(true)
-      return;
-    }
-    if (record.type == 2) {
-      setAddPassword(true)
-      return;
-    }
-  }
-  const handleCloseDrawer = () => {
-    setAddEdit(false);
-    setAddPassword(false);
-  }
+  const handleOpen = () => {
+    setSecretForm(true);
+  };
 
   return (
     <>
@@ -31,41 +16,34 @@ const TeamDrawer = ({ open, onClose, record }) => {
         title={record?.team_name}
         width={700}
         onClose={() => {
-          handleCloseDrawer();
-          onClose()
+          onClose();
         }}
         open={open}
         extra={
           record.role_type !== 3 && (
             <>
-            <Space>
-              {!addEdit && !addPassword && (<Button type="primary" className='bg-red-500' onClick={handleAccess(record)}>
-                Action
-              </Button>)}
-              {addEdit && (
-                <>
-                  <Button>Edit</Button>
-                  <Button onClick={() => setSecretForm(true)}>Add Password</Button>
-                </>
-              )}
-              {addPassword && (
-                <>
-                  <Button onClick={() => setSecretForm(true)}>Add Password</Button>
-                </>
-              )}
-            </Space>
+              <Space>
+                {record.role_type !== 3 && (
+                  <>
+                    <Button onClick={() => handleOpen()}>Add Secrets</Button>
+                  </>
+                )}
+              </Space>
             </>
           )
         }
-
       >
-        <TableUserComponent/>
-
-        <p>{record?.team_name}</p>
-        <p>{record?.created_at}</p>
-        <p>{record?.updated_at}</p>
-        {secretForm && (<StoreSecretForm secretForm={secretForm} setSecretForm={setSecretForm} record={record.id} />)}
+           {<SecretStoreForm 
+         secretForm={secretForm}
+         setSecretForm={setSecretForm}
+      />}
+        <TableUserComponent
+        record={record}
+        assignRole={assignRole}
+         />
       </Drawer>
+   
+
     </>
   );
 };

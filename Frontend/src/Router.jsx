@@ -8,14 +8,11 @@ import Dashboard from "./Dashboard/Dashboard";
 import Error from "./Error/Error";
 import EmailVerification from "./Auth/EmailVerification";
 import { EmailVerificationCheck } from "./Auth/EmailVerificationCheck";
-import StoreSecrets from "./Auth/StoreSecrets";
 import { Admin } from "./Admin/Admin";
 import { Teams } from "./Teams/Teams";
-// import UsersCheck from "./Users/UsersComponent" 
 import { Secrets } from "./Secret/Secrets";
-import FilePassword from "./Secret/FilePassword"
+import FilePassword from "./Secret/FilePassword";
 import { JoinTeam } from "./joinTeam/JoinTeam";
-
 
 const router = createBrowserRouter([
   {
@@ -40,7 +37,19 @@ const router = createBrowserRouter([
         element: <Teams />,
       },
       {
-        path: "/secrets/:uuid?",
+        path: "/secrets",
+        element: <Secrets />,
+      },
+      {
+        path: "/secrets/mysecrets",
+        element: <Secrets />,
+      },
+      {
+        path: "/secrets/teamsecrets",
+        element: <Secrets />,
+      },
+      {
+        path: "/secrets/sharewithme",
         element: <Secrets />,
       },
       {
@@ -50,17 +59,11 @@ const router = createBrowserRouter([
       {
         path: "/admin/pendingList",
         element: <Admin />,
-
       },
       {
-        path: "/storeSecrets",
-        element: <StoreSecrets />
+        path: "/filePassword",
+        element: <FilePassword />,
       },
-      {
-        path:"/filePassword",
-        element: <FilePassword/>
-      }
-
     ],
   },
 
@@ -83,7 +86,6 @@ const router = createBrowserRouter([
       {
         path: "/email-verify/:uuid/:token",
         element: <EmailVerificationCheck />,
-
       },
       //   {
       //     path: "/forgotpassword",
