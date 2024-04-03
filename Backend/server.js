@@ -47,7 +47,6 @@ const inviteRoute = require("./routes/invite");
 
 const secretRoute = require("./routes/secrets");
 
-
 app.use(`${apiBasePath}/auth`, authRoute);
 
 app.use(`${apiBasePath}/superAdmin`, superAdminRoute);

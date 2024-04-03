@@ -16,6 +16,7 @@ const inviteUsers = async (req, res) => {
     const email = req.body.email;
     const role = req.body.role_id;
     const team_uuid = req.body.team_uuid;
+
     const exitsInviteUsers = await Invite.findOne({
       where: { email: email },
     });
@@ -33,7 +34,7 @@ const inviteUsers = async (req, res) => {
     } else {
       // Create the invite in the database
       const invite = await Invite.create({
-        inviter_uuid: req.user.id,
+        team_uuid: team_uuid,
         email: email,
         uuid: uuid.v4(),
         status: 0,
@@ -74,7 +75,7 @@ const inviteUsers = async (req, res) => {
       return res.status(200).json(`Invite Sent Successfully to ${email}`);
     }
   } catch (error) {
-    console.log(error, "errp");
+    console.log(error);
     return res.status(404).json({ error: error });
   }
 };

@@ -6,6 +6,7 @@ const User = db.users;
 const emailVerificationToken = db.email_verification_token; // Email Verification Token
 const OTP = db.otp_verifications;
 const passPhrase = db.pass_pharse;
+const UserTeams = db.user_team_members;
 const crypto = require("crypto");
 const tokens = require("../../utils/generateAuthToken");
 const generateAuthToken = tokens.generateAuthToken;
@@ -19,6 +20,7 @@ const IP = require("ip");
 
 const register = async (req, res) => {
   try {
+
     const { username, email, password } = req.body;
 
     const userExists = await User.findOne({
@@ -35,6 +37,15 @@ const register = async (req, res) => {
       uuid: uuid.v4(),
       device_ip: IP.address(),
     });
+
+    if (req.body.team_uuid) {
+      const UserTeam = await UserTeams.create({
+        user_uuid: user.uuid,
+        team_uuid: req.body.team_uuid,
+        role_type: req.body.role,
+        uuid: uuid.v4(),
+      });
+    }
 
     if (user) {
       const expiresAt = new Date(Date.now() + 3600000);
@@ -202,6 +213,8 @@ const verifyEmail = async (req, res) => {
 
 const verify_otp = async (req, res) => {
   const otp = req.body.otp;
+
+
   const userOtp = await OTP.findOne({
     where: {
       otp: otp,
@@ -209,10 +222,9 @@ const verify_otp = async (req, res) => {
   });
 
 
-
   const findUser = await User.findOne({
     where: {
-      uuid: userOtp.user_uuid,
+      uuid: userOtp?.user_uuid,
     },
   });
 

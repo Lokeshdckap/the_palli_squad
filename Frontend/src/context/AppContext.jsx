@@ -9,12 +9,33 @@ const MyContextProvider = ({ children }) => {
   const navigate = useNavigate();
   const [userDetail, setUserDetail] = useState(null);
 
+  const [role, setRole] = useState(null);
 
   useEffect(() => {
 
     userInfo();
 
   },[])
+
+  const getTeam = async () => {
+    // setLoading(true);
+    if (params.uuid) {
+      await axiosClient
+        .get(`/api/teams/getTeam/${params.uuid}`)
+        .then((res) => {
+          // setLoading(false);
+          setRole(res.data.team_member.role_id);
+        })
+        .catch((err) => {
+          const response = err.response;
+          if (response && response?.status === 404) {
+            navigate("/error");
+          }
+          console.log(err);
+          // setLoading(false);
+        });
+    }
+  };
 
   const userInfo = async () => {
     await axiosClient
@@ -34,6 +55,8 @@ const MyContextProvider = ({ children }) => {
       value={{
         userDetail,
         userInfo,
+        role,
+        getTeam
       }}
     >
       {children}
