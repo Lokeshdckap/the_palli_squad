@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Header } from "../Header/Header";
-import TeamTableComponent from "../commonComponents/TeamTableComponent";
 import TeamName from "./TeamName";
 import CreateTeamForm from "./CreateTeamForm";
 import axiosClient from "../axios-client";

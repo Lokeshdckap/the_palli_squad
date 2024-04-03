@@ -23,6 +23,9 @@ const TeamDrawer = ({ placement , open,onClose,record}) => {
         <p>{record?.team_name}</p>
         <p>{record?.created_at}</p>
         <p>{record?.updated_at}</p>
+        <div>
+          
+        </div>
       </Drawer>
     </>
   );

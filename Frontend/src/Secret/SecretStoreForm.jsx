@@ -48,28 +48,6 @@ export default function SecretStoreForm({ closeStoreTab, setCloseStoreTab,getAll
     }
   };
 
-  //   const encryptApiPairs = (valuesAndKeys) => {
-  //     try {
-  //       const secretKey = process.env.REACT_APP_SECRET_KEY;
-  //       const jsonString = JSON.stringify(valuesAndKeys);
-  //       const valuesKeys = CryptoJS.AES.encrypt(jsonString, secretKey).toString();
-  //       return valuesKeys;
-  //     } catch (err) {
-  //       console.log(err, "Error encrypting API pairs");
-  //     }
-  //   };
-  // -----Decrypting Api pairs---
-  // const decryptApiPairs = (valuesAndKeys) => {
-  //     try {
-  //         const secretKey = process.env.REACT_APP_SECRET_KEY;
-  //         const bytes = CryptoJS.AES.decrypt(valuesAndKeys, secretKey);
-  //         const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
-  //         return decryptedData;
-  //     } catch (err) {
-  //         console.log(err, "Error decrypting API pairs");
-  //     }
-  // }
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -88,19 +66,6 @@ export default function SecretStoreForm({ closeStoreTab, setCloseStoreTab,getAll
     }
   };
 
-  //   const handleApiPair = () => {
-  //     setApiPairs([...apiPairs, { apiKey: "", apiValue: "" }]);
-  //   };
-
-  //   const handleMultipleInputs = (value, index, field) => {
-  //     const newApiKeyValue = [...apiPairs];
-  //     newApiKeyValue[index][field] = value;
-  //     setApiPairs(newApiKeyValue);
-  //   };
-
-  //   const handleDeleteClick = (index) => {
-  //     setApiPairs((prevPairs) => prevPairs.filter((pair, i) => i !== index));
-  //   };
 
   const handleEyeIcon = (index, fieldType) => {
     if (fieldType === "password") {
@@ -140,7 +105,7 @@ export default function SecretStoreForm({ closeStoreTab, setCloseStoreTab,getAll
       formDataToUpload.append("title", formData.title);
       formDataToUpload.append("username", formData.userName);
 
-      console.log(formDataToUpload, "ll");
+      // console.log(formDataToUpload, "ll");
 
       axiosClient
         .post("/api/secrets/secret-encryption", formDataToUpload, {
