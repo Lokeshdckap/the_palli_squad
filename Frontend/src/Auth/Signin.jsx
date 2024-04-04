@@ -78,7 +78,7 @@ const Signin = () => {
         setAuth({
           token: res.data.access,
         });
-        setOtps(false);
+        setOtps(false); 
       })
       .catch((err) => {
         const response = err.response;

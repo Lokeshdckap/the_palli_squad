@@ -72,7 +72,7 @@ export default function CreateTeamForm({
         <div className="flex justify-between px-3 py-2">
           <p className="text-2xl">Teams</p>
           <button
-            className="px-8 py-2 bg-red-600 rounded-md text-[16px] text-white"
+            className="px-8 py-2 bg-blue-600 hover:bg-blue-500 rounded-md text-[16px] text-white"
             onClick={() => {
               setTeamCreateForm(true);
             }}
@@ -107,7 +107,7 @@ export default function CreateTeamForm({
                   />
                 </div>
                 <div className="flex items-center justify-center py-1 mt-3">
-                  <button className="px-8 py-2 bg-red-600 rounded-md text-white">
+                  <button className="px-8 py-2 bg-blue-600 hover:bg-blue-500 rounded-md text-white">
                     Create
                   </button>
                 </div>

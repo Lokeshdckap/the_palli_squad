@@ -5,6 +5,8 @@ import axiosClient from "../axios-client";
 import SecretTable from "../commonComponents/SecretTable";
 import SecretsTableComponent from "../commonComponents/SecretsTable";
 import SecretStoreForm from "./SecretStoreForm";
+import Justification from "../commonComponents/Justification"
+
 export const SecretComponent = () => {
   const params = useParams();
   const [secrets, setSecrets] = useState([]);
@@ -16,12 +18,12 @@ export const SecretComponent = () => {
   const [decryptedAttachments, setDecryptedAttachments] = useState([]);
   const [decryptedFileType, setDecryptedFileType] = useState("");
   const [decryptedFileName, setDecryptedFileName] = useState("");
+  const [reason, setReason] = useState(false);
 
   const [closeStoreTab, setCloseStoreTab] = useState(false);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const hash_id = queryParams.get("hash_id");
-
   useEffect(() => {
     getAllSecretsForUsers();
     if (authUser) {
@@ -110,20 +112,26 @@ export const SecretComponent = () => {
     <>
       <div>
         <Header />
+        <button className="px-8 py-2 bg-blue-600 hover:bg-blue-500 rounded-md text-[16px] text-white" onClick={() => setReason(true)}>
+          Justification
+        </button>
         <div>
           {!closeStoreTab && (
             <div className="flex justify-between p-2">
               <p className="text-2xl">Secrets</p>
               <button
-                className="px-8 py-2 bg-red-600 rounded-md text-[16px] text-white"
+                className="px-8 py-2 bg-blue-600 hover:bg-blue-500 rounded-md text-[16px] text-white"
                 onClick={() => {
                   setCloseStoreTab(true);
                 }}
               >
                 Add+
               </button>
+
             </div>
           )}
+
+
           <SecretTable
             secret={secrets}
             setPassword={setPassword}
@@ -153,6 +161,7 @@ export const SecretComponent = () => {
             setCloseStoreTab={setCloseStoreTab}
             getAllSecretsForUsers={getAllSecretsForUsers}
           />
+          {reason && (<Justification reason={reason} setReason={setReason}/>)}
         </div>
       </div>
     </>

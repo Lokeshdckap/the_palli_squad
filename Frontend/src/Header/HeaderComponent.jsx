@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Search } from "../commonComponents/Search";
+import Search from "../commonComponents/Search";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { useMyContext } from "../context/AppContext";
 

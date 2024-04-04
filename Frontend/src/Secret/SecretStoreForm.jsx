@@ -260,7 +260,7 @@ export default function SecretStoreForm({ closeStoreTab, setCloseStoreTab, getAl
                 <div className="text-center mt-4">
                   <button
                     type="submit"
-                    className="bg-red-600 py-2 px-6 rounded-md text-white"
+                    className="bg-blue-600 hover:bg-blue-500 py-2 px-6 rounded-md text-white"
                   >
                     Submit
                   </button>

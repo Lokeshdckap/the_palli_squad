@@ -5,12 +5,16 @@ import TeamName from "./TeamName";
 import InviteUsers from "./InviteUsers";
 import CreateTeamForm from "./CreateTeamForm";
 import axiosClient from "../axios-client";
+import { useParams } from "react-router-dom";
+import SecreteCode from "../commonComponents/SecreteCode"
 
 const TeamsComponent = (props) => {
   const [teamList, setTeamList] = useState([]);
   const [teampop, setTeampop] = useState(false);
   const [closeTab, setCloseTab] = useState(false);
   const [teamCreateForm, setTeamCreateForm] = useState("");
+
+  const params = useParams()
 
   const handleOpenClose = () => {
     setCloseTab(false);
@@ -28,8 +32,9 @@ const TeamsComponent = (props) => {
     axiosClient
       .get("/api/teams/getAllTeam")
       .then((res) => {
+        console.log(res)
         setTeamList(res.data.getAllTeam);
-
+         
         setTeampop(false);
       })
       .catch((error) => {
@@ -37,18 +42,26 @@ const TeamsComponent = (props) => {
       });
   };
   // console.log(teamList)
+
   return (
     <div>
       {!teampop ? (
         <div>
           <Header />
           {/* <InviteUsers closeTab={closeTab} setCloseTab={setCloseTab} handleOpenClose={handleOpenClose} /> */}
-          <CreateTeamForm teamCreateForm={teamCreateForm} setTeamCreateForm={setTeamCreateForm} handleTeamForm={handleTeamForm} />
-          <TeamName />
+          <CreateTeamForm
+            teamCreateForm={teamCreateForm}
+            setTeamCreateForm={setTeamCreateForm}
+            handleTeamForm={handleTeamForm}
+            getAllTeam={getAllTeam}
+          />
+          {!teamCreateForm && <TeamName teamList={teamList} />}
         </div>
       ) : (
         <></>
       )}
+
+      <SecreteCode/>
     </div>
   );
 };

@@ -7,24 +7,45 @@ import TeamDrawer from "./TeamDrawer";
 import moment from "moment";
 import "moment-timezone";
 import { formatDistanceToNow, isValid } from "date-fns";
+import axiosClient from "../axios-client";
+import { useLocation, useNavigate } from "react-router-dom";
 const TeamTableComponent = ({ teamList }) => {
   const [closeTab, setCloseTab] = useState(false);
   const [clickedRowIndex, setClickedRowIndex] = useState(null);
   const [open, setOpen] = useState(false);
   const [record, setRecord] = useState(null); // Changed initial value to null
+  const [assignRole,setAssignRole] = useState(null);
+ const navigate = useNavigate()
 
+ const location = useLocation();
+ const queryParams = new URLSearchParams(location.search);
+ const teamUuid = queryParams.get('team_uuid');
   const handleOpenClose = (index) => {
     setCloseTab(!closeTab); // Toggle closeTab state
-    setClickedRowIndex(index);
+    setClickedRowIndex(index.team_uuid);
   };
 
   const handleRowClick = (record, e) => {
+    navigate(`/teams/?team_uuid=${record.team_uuid}`);
     if (e.target.classList.contains("ant-table-cell")) {
-      // Check if the clicked element is inside the cell
       setRecord(record);
       setOpen(true);
     }
+    team()
   };
+
+
+  const team = () => {
+    axiosClient
+      .get(`/api/teams/getTeam/${teamUuid}`)
+      .then((res) => {
+        setAssignRole(res.data.team_member.role_type);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  
 
   const onClose = () => {
     setOpen(false);
@@ -78,20 +99,35 @@ const TeamTableComponent = ({ teamList }) => {
     {
       title: "Action",
       dataIndex: "action",
-      render: (text, record, index) => (
-        <Button
-          type="primary"
-          className="bg-red-500"
-          id="userAdd"
-          onClick={() => {
-            handleOpenClose(record.id);
-            setCloseTab(true);
-          }}
-        >
-          Add User
-        </Button>
-      ),
+      render: (text, record, index) => {
+        if (record.role_type == 3) {
+          return (
+            <Button
+              type="primary"
+              className="bg-blue-600 hover:bg-blue-500"
+              disabled // Disable the button
+            >
+              Add User
+            </Button>
+          );
+        } else {
+          return (
+            <Button
+              type="primary"
+              className="bg-blue-600 hover:bg-blue-500"
+              id="userAdd"
+              onClick={() => {
+                handleOpenClose(record);
+                setCloseTab(true);
+              }}
+            >
+              Add User
+            </Button>
+          );
+        }
+      },
     },
+    
   ];
 
   return (
@@ -139,6 +175,7 @@ const InviteUsers = ({
   const [inviteEmail, setInviteEmail] = useState("");
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -162,13 +199,24 @@ const InviteUsers = ({
     }
 
     setLoading(true);
+
     try {
-      const response = await axios.post("", {
-        id: clickedRowIndex,
+
+      let payload = {
         email: inviteEmail,
-        role: role,
-      });
-      console.log(response);
+        role_id: role,
+        team_uuid : clickedRowIndex,
+      }
+      console.log(payload)
+      axiosClient
+          .post("/api/invites/inviteUsers",payload)
+          .then((res) => {
+            console.log(res.data);
+            navigate("/dashboard");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       toast.success("Email sent Successfully");
       setInviteEmail("");
       setRole("");
@@ -216,7 +264,7 @@ const InviteUsers = ({
               type="primary"
               htmlType="submit"
               loading={loading}
-              className="bg-red-500"
+              className="bg-blue-600 hover:bg-blue-500"
             >
               {loading ? "Sending..." : "Invite"}
             </Button>

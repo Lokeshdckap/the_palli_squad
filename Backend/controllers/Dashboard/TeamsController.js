@@ -82,7 +82,11 @@ const createTeams = async (req, res) => {
   const getAllTeam = async (req, res) => {
     try {
       const user = req.user.id;
-      const query = `select * from user_team_members inner join teams on user_team_members.team_uuid = teams.uuid inner join users on user_team_members.user_uuid = users.uuid where users.uuid = :user`;
+      const query = `SELECT user_team_members.*, teams.*, users.*, user_team_members.role_type
+      FROM user_team_members
+      INNER JOIN teams ON user_team_members.team_uuid = teams.uuid
+      INNER JOIN users ON user_team_members.user_uuid = users.uuid
+      WHERE users.uuid = :user;`;
   
       const [getAllTeam] = await sequelize.query(query, {
         replacements: { user },
@@ -128,7 +132,7 @@ const createTeams = async (req, res) => {
     try {
       const team_uuid = req.params.uuid;
       const userDetail = await User.findAll({
-        attributes: ["username", "isAdmin", "email", "uuid"],
+        attributes: ["username", "email", "uuid"],
         include: {
           model: UserTeams,
           where: { team_uuid: team_uuid }, // Filter by team_uuid

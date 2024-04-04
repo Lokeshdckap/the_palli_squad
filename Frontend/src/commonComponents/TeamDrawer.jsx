@@ -2,35 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { Button, Drawer, Radio, Space } from 'antd';
 import StoreSecretForm from './storeSecretForm';
 import axiosClient from '../axios-client';
+import TableUserComponent from './TableUserComponent';
+
 const TeamDrawer = ({ open, onClose, record }) => {
   const [addEdit, setAddEdit] = useState(false);
   const [secretForm, setSecretForm] = useState(false);
   const [addPassword, setAddPassword] = useState(false);
-  const [checkAccess, setCheckAccess] = useState(2);
 
-  // -------------To use Api----------
-  // useEffect(() => {
-  //   axiosClient.get('')
-  //     .then(response => {
-  //       const accessId = response.data.role;
-  //       setCheckAccess(accessId)
-  //     })
-  //     .catch(error => {
-  //       console.log(error)
-  //     })
-  // }, []);
 
-  const handleAccess = () => {
-    if (checkAccess == 1) {
+  const handleAccess = (record) => {
+    if (record.role_type == 1) {
       setAddEdit(true)
       return;
     }
-    if (checkAccess == 2) {
+    if (record.type == 2) {
       setAddPassword(true)
       return;
     }
   }
-
   const handleCloseDrawer = () => {
     setAddEdit(false);
     setAddPassword(false);
@@ -40,7 +29,6 @@ const TeamDrawer = ({ open, onClose, record }) => {
     <>
       <Drawer
         title={record?.team_name}
-        // placement={placement}
         width={700}
         onClose={() => {
           handleCloseDrawer();
@@ -48,9 +36,10 @@ const TeamDrawer = ({ open, onClose, record }) => {
         }}
         open={open}
         extra={
-          checkAccess !== 3 && (
+          record.role_type !== 3 && (
+            <>
             <Space>
-              {!addEdit && !addPassword && (<Button type="primary" className='bg-red-500' onClick={handleAccess}>
+              {!addEdit && !addPassword && (<Button type="primary" className='bg-red-500' onClick={handleAccess(record)}>
                 Action
               </Button>)}
               {addEdit && (
@@ -65,9 +54,13 @@ const TeamDrawer = ({ open, onClose, record }) => {
                 </>
               )}
             </Space>
+            </>
           )
         }
+
       >
+        <TableUserComponent/>
+
         <p>{record?.team_name}</p>
         <p>{record?.created_at}</p>
         <p>{record?.updated_at}</p>

@@ -48,7 +48,6 @@ const EditableCell = ({
     ) : (
       <Input />
     );
-
   return (
     <td {...restProps}>
       {editing ? (
@@ -78,7 +77,7 @@ const EditableCell = ({
 };
 
 const SecretTable = ({
-  secret,
+  secret = [],
   setPassword,
   password,
   handleInputChange,
@@ -96,6 +95,9 @@ const SecretTable = ({
   decryptedAttachments,
   decryptedFileType,
   decryptedFileName,
+  searchText,
+  secretSearch = [],
+  searchResults,
 }) => {
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
@@ -146,7 +148,7 @@ const SecretTable = ({
       case "attachments":
         return showAttachments && authUser
           ? decryptedFileName
-          : maskedText
+          : maskedText;
       default:
         return truncatedText; // Default behavior if type is not recognized
     }
@@ -240,23 +242,75 @@ const SecretTable = ({
     return mimeTypeMap[extension] || "application/octet-stream";
   };
 
+  // useEffect(() => {
+  //   updateData();
+  // }, [searchText, searchResults]);
+
   useEffect(() => {
     updateData();
-  }, [secret]);
-
+  }, [searchResults, secret, searchText]);
   const updateData = () => {
-    const updatedData = secret.map((secrets) => ({
-      id: secrets.uuid,
-      key: secrets.uuid,
-      username: secrets.username,
-      title: secrets.title,
-      password: secrets.password,
-      attachments: secrets.encrypted_attachment_hex,
-      showPassword: false,
-    }));
+    let updatedData = [];
+
+    // If searchText is provided and searchResults is populated, filter data
+    if (searchText && searchResults && searchResults.length > 0) {
+      updatedData = searchResults.map((secrets) => ({
+        id: secrets.uuid,
+        key: secrets.uuid,
+        username: secrets.username,
+        title: secrets.title,
+        password: secrets.password,
+        attachments: secrets.encrypted_attachment_hex,
+        showPassword: false,
+      }));
+    } else {
+      // Otherwise, display all data
+      updatedData = secret.map((secrets) => ({
+        id: secrets.uuid,
+        key: secrets.uuid,
+        username: secrets.username,
+        title: secrets.title,
+        password: secrets.password,
+        attachments: secrets.encrypted_attachment_hex,
+        showPassword: false,
+      }));
+    }
 
     setData(updatedData);
   };
+
+
+
+
+  // const updateData = () => {
+  //   let updatedData = [];
+
+  //   // If searchText is provided and searchResults is populated, filter data
+  //   if (searchText && searchResults.length > 0) {
+  //     updatedData = searchResults.map((secrets) => ({
+  //       id: secrets.uuid,
+  //       key: secrets.uuid,
+  //       username: secrets.username,
+  //       title: secrets.title,
+  //       password: secrets.password,
+  //       attachments: secrets.encrypted_attachment_hex,
+  //       showPassword: false,
+  //     }));
+  //   } else {
+  //     // Otherwise, display all data
+  //     updatedData = secret.map((secrets) => ({
+  //       id: secrets.uuid,
+  //       key: secrets.uuid,
+  //       username: secrets.username,
+  //       title: secrets.title,
+  //       password: secrets.password,
+  //       attachments: secrets.encrypted_attachment_hex,
+  //       showPassword: false,
+  //     }));
+  //   }
+
+  //   setData(updatedData);
+  // };
 
   const isEditing = (record) => record.key === editingKey;
 
@@ -300,7 +354,7 @@ const SecretTable = ({
           .then((response) => {
             console.log(response);
           })
-          .catch((error) => {});
+          .catch((error) => { });
 
         setData(newData);
         setEditingKey("");
@@ -463,7 +517,9 @@ const SecretTable = ({
         error={error}
         showModal={showModal}
       />
+      {/* <p>Hello</p> */}
       <Form form={form} component={false}>
+
         <Table
           components={{
             body: {

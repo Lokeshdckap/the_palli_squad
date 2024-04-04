@@ -14,6 +14,7 @@ import { Teams } from "./Teams/Teams";
 // import UsersCheck from "./Users/UsersComponent" 
 import { Secrets } from "./Secret/Secrets";
 import FilePassword from "./Secret/FilePassword"
+import { JoinTeam } from "./joinTeam/JoinTeam";
 
 
 const router = createBrowserRouter([
@@ -108,6 +109,10 @@ const router = createBrowserRouter([
     ],
   },
 
+  {
+    path: "/join/:token",
+    element: <JoinTeam />,
+  },
   {
     path: "*",
     element: <Error />,
