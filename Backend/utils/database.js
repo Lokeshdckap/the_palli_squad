@@ -54,6 +54,7 @@ db.pass_pharse = require("../models/pass_pharse")(sequelize, DataTypes);
 
 db.shares = require("../models/shares")(sequelize, DataTypes);
 
+db.shares_users = require("../models/shares_users")(sequelize, DataTypes);
 
 db.users.hasMany(db.user_team_members, {
   foreignKey: "user_uuid",
@@ -95,5 +96,49 @@ db.secret.belongsTo(db.users, {
   foreignKey: "user_uuid",
   sourceKey: "uuid",
 });
+
+
+db.secret.hasMany(db.shares_users, {
+  foreignKey: "secret_uuid",
+  targetKey: "uuid",
+});
+
+db.shares_users.belongsTo(db.secret, {
+  foreignKey: "secret_uuid",
+  targetKey: "uuid",
+});
+
+db.secret.hasMany(db.shares, {
+  foreignKey: "secret_uuid",
+  targetKey: "uuid",
+});
+
+db.shares.belongsTo(db.secret, {
+  foreignKey: "secret_uuid",
+  targetKey: "uuid",
+});
+
+db.teams.hasMany(db.shares, {
+  foreignKey: "team_uuid",
+  targetKey: "uuid",
+});
+
+db.shares.belongsTo(db.teams, {
+  foreignKey: "team_uuid",
+  targetKey: "uuid",
+});
+
+db.users.hasMany(db.shares_users, {
+  foreignKey: "share_uuid",
+  targetKey: "uuid",
+});
+
+db.shares_users.belongsTo(db.users, {
+  foreignKey: "share_uuid",
+  targetKey: "uuid",
+  as: 'sharedWithUser'
+});
+
+
 
 module.exports = db;

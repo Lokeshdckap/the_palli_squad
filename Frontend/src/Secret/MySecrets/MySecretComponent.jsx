@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Header } from "../../Header/Header";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axiosClient from "../../axios-client";
 import SecretTable from "../../commonComponents/SecretTable";
 import SecretStoreForm from "../../commonComponents/SecretStoreForm";
+import Crypto from "crypto-js";
 
 export const MySecretComponent = () => {
 
@@ -17,15 +18,24 @@ export const MySecretComponent = () => {
   const [decryptedAttachments, setDecryptedAttachments] = useState([]);
   const [decryptedFileType, setDecryptedFileType] = useState("");
   const [decryptedFileName, setDecryptedFileName] = useState("");
-
+  const [userList, setUserList] = useState([]);
+  const [teamList,setTeamList] = useState([]);
+  const [decryptedDescription, setDecryptedDescription] = useState("");
   const [closeStoreTab, setCloseStoreTab] = useState(false);
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const hash_id = queryParams.get("hash_id");
 
-  useEffect(() => {
+  const naviagte = useNavigate()
+
+  useEffect(()=>{
     getAllSecretsForUsers();
+    getAllUsers()
+    getAllTeamForSecrets()
+  },[])
+  useEffect(() => {
+ 
     if (authUser) {
       getDecrypted();
     }
@@ -41,11 +51,14 @@ export const MySecretComponent = () => {
     setIsModalOpen(false);
   };
 
-  const getAllSecretsForUsers = () => {
-    axiosClient
+  const getAllSecretsForUsers = async() => {
+   await axiosClient
       .get(`/api/secrets/getAllSecretsForUsers`)
       .then((res) => {
         setSecrets(res.data.data);
+        if(res.data.data && res.data.data.length > 0){
+        naviagte(`/secrets/mysecrets/?hash_id=${res?.data?.data[0]?.uuid}`)
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -59,7 +72,7 @@ export const MySecretComponent = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!password.trim()) {
@@ -67,11 +80,22 @@ export const MySecretComponent = () => {
       return;
     }
 
-    let payLoad = {
-      passPhrase: password,
+    const encryptPassword = (encryptData) => {
+      const secretKey = process.env.REACT_APP_SECRET_KEY;
+      const securePassword = Crypto.AES.encrypt(
+        encryptData,
+        secretKey
+      ).toString();
+      return securePassword;
     };
 
-    axiosClient
+    const encryptSecret = encryptPassword(password)
+
+    let payLoad = {
+      passPhrase: encryptSecret,
+    };
+
+    await axiosClient
       .post("/api/auth/checkPassPharse", payLoad)
       .then((res) => {
         if (res.status === 200) {
@@ -93,6 +117,9 @@ export const MySecretComponent = () => {
             if (res.data.deryptionData) {
               setDecryptedData(res.data.deryptionData);
             }
+            if(res.data.decryptedDescription){
+              setDecryptedDescription(res.data.decryptedDescription)
+            }
             if (res.data.file) {
               setDecryptedFileType(res.data.encryptedFileType);
               setDecryptedFileName(res.data.encryptedFileName);
@@ -108,6 +135,40 @@ export const MySecretComponent = () => {
       // Handle the error, such as displaying an error message
     }
   };
+
+  const getAllUsers = async ()=>{
+    try {
+      await axiosClient
+        .get(`/api/teams/getAllUsers`)
+        .then((res) => {
+          console.log(res.data)
+          setUserList(res.data.users)
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  const getAllTeamForSecrets = async ()=>{
+    try {
+      await axiosClient
+        .get(`/api/teams/getAllTeamForSecrets`)
+        .then((res) => {
+          setTeamList(res.data.teams)
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  
+
   return (
     <>
       <div>
@@ -144,6 +205,9 @@ export const MySecretComponent = () => {
             decryptedAttachments={decryptedAttachments}
             decryptedFileType={decryptedFileType}
             decryptedFileName={decryptedFileName}
+            decryptedDescription={decryptedDescription}
+            userList={userList}
+            teamList={teamList}
           />
         </div>
         <div>

@@ -11,7 +11,6 @@ import { EmailVerificationCheck } from "./Auth/EmailVerificationCheck";
 import { Admin } from "./Admin/Admin";
 import { Teams } from "./Teams/Teams";
 import { Secrets } from "./Secret/Secrets";
-import FilePassword from "./Secret/FilePassword";
 import { JoinTeam } from "./joinTeam/JoinTeam";
 
 const router = createBrowserRouter([
@@ -60,10 +59,10 @@ const router = createBrowserRouter([
         path: "/admin/pendingList",
         element: <Admin />,
       },
-      {
-        path: "/filePassword",
-        element: <FilePassword />,
-      },
+      // {
+      //   path: "/filePassword",
+      //   element: <FilePassword />,
+      // },
     ],
   },
 

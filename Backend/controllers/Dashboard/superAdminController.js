@@ -119,7 +119,7 @@ const unAuthorizedDeviceLogin = async (req, res) => {
       user_uuid: user.uuid,
       justification: justification,
       uuid: uuid.v4(),
-      device_ip: IP.address(),
+      device_ip: req.body.device_id.SecretPublicDeviceID,
     });
     if (unAuthorizedDevice) {
       return res.status(200).json({

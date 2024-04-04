@@ -20,3 +20,7 @@
 .pointer-cursor {
   cursor: pointer;
 }
+
+.select__control{
+  width: 200px !important;
+}

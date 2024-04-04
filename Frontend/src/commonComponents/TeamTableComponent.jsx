@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Table, Button, Modal } from "antd";
+import React, { useEffect, useState } from "react";
+import { Table, Button, Modal, Space } from "antd";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -9,43 +9,51 @@ import "moment-timezone";
 import { formatDistanceToNow, isValid } from "date-fns";
 import axiosClient from "../axios-client";
 import { useLocation, useNavigate } from "react-router-dom";
+import { EyeOutlined, ShareAltOutlined } from "@ant-design/icons";
+import SecreteCode from "../Auth/Login/SecretCode";
+import { useMyContext } from "../context/AppContext";
 const TeamTableComponent = ({ teamList }) => {
   const [closeTab, setCloseTab] = useState(false);
   const [clickedRowIndex, setClickedRowIndex] = useState(null);
   const [open, setOpen] = useState(false);
   const [record, setRecord] = useState(null); // Changed initial value to null
-  const [assignRole,setAssignRole] = useState(null);
- const navigate = useNavigate()
+  const [assignRole, setAssignRole] = useState(null);
+  const navigate = useNavigate();
+  const { userInfo, userDetail, checkSecret } = useMyContext();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const teamUuid = queryParams.get("team_uuid");
 
- const location = useLocation();
- const queryParams = new URLSearchParams(location.search);
- const teamUuid = queryParams.get('team_uuid');
   const handleOpenClose = (index) => {
     setCloseTab(!closeTab); // Toggle closeTab state
     setClickedRowIndex(index.team_uuid);
   };
 
   const handleRowClick = (record, e) => {
+    console.log(e.target.id);
     navigate(`/teams/?team_uuid=${record.team_uuid}`);
-    if (e.target.classList.contains("ant-table-cell")) {
+    if (e.target.classList.contains("ant-table-cell") || e.target.id == 1) {
       setRecord(record);
       setOpen(true);
     }
-    team()
   };
 
+  useEffect(() => {
+    team();
+  }, [teamUuid]);
 
   const team = () => {
-    axiosClient
-      .get(`/api/teams/getTeam/${teamUuid}`)
-      .then((res) => {
-        setAssignRole(res.data.team_member.role_type);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (teamUuid) {
+      axiosClient
+        .get(`/api/teams/getTeam/${teamUuid}`)
+        .then((res) => {
+          setAssignRole(res.data.team_member.role_type);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
-  
 
   const onClose = () => {
     setOpen(false);
@@ -60,42 +68,58 @@ const TeamTableComponent = ({ teamList }) => {
     },
     {
       title: "Team name",
-      dataIndex: "name",
+      dataIndex: "team_name",
     },
     {
       title: "Member count",
-      dataIndex: "team_count",
+      dataIndex: "member_count",
     },
     {
-      title: "Created At",
-      dataIndex: "createdAt",
-      render: (createdAt) => {
-        let formattedTime = ""; // Initialize formattedTime variable
-
-        if (isValid(new Date(createdAt))) {
-          formattedTime = formatDistanceToNow(new Date(createdAt), {
-            addSuffix: true,
-          });
-        }
-
-        return <span>{formattedTime}</span>;
-      },
+      title: "View_Team_Details",
+      dataIndex: "view",
+      render: (text, record) => (
+        <Space size="large" id="1">
+          <EyeOutlined
+            onClick={(e) => handleRowClick(record, e)}
+            style={{ fontSize: "20px" }}
+            id="1"
+          />
+          <span id="1" className="text-md text-sky-600">
+            View
+          </span>
+        </Space>
+      ),
     },
-    {
-      title: "Updated At",
-      dataIndex: "updatedAt",
-      render: (updatedAt) => {
-        let formattedTime = ""; // Initialize formattedTime variable
+    // {
+    //   title: "Created At",
+    //   dataIndex: "createdAt",
+    //   render: (createdAt) => {
+    //     let formattedTime = ""; // Initialize formattedTime variable
 
-        if (isValid(new Date(updatedAt))) {
-          formattedTime = formatDistanceToNow(new Date(updatedAt), {
-            addSuffix: true,
-          });
-        }
+    //     if (isValid(new Date(createdAt))) {
+    //       formattedTime = formatDistanceToNow(new Date(createdAt), {
+    //         addSuffix: true,
+    //       });
+    //     }
 
-        return <span>{formattedTime}</span>;
-      },
-    },
+    //     return <span>{formattedTime}</span>;
+    //   },
+    // },
+    // {
+    //   title: "Updated At",
+    //   dataIndex: "updatedAt",
+    //   render: (updatedAt) => {
+    //     let formattedTime = ""; // Initialize formattedTime variable
+
+    //     if (isValid(new Date(updatedAt))) {
+    //       formattedTime = formatDistanceToNow(new Date(updatedAt), {
+    //         addSuffix: true,
+    //       });
+    //     }
+
+    //     return <span>{formattedTime}</span>;
+    //   },
+    // },
     {
       title: "Action",
       dataIndex: "action",
@@ -106,7 +130,7 @@ const TeamTableComponent = ({ teamList }) => {
               type="primary"
               className="bg-red-500"
               disabled // Disable the button
-            > 
+            >
               Add User
             </Button>
           );
@@ -127,7 +151,6 @@ const TeamTableComponent = ({ teamList }) => {
         }
       },
     },
-    
   ];
 
   return (
@@ -154,6 +177,10 @@ const TeamTableComponent = ({ teamList }) => {
           clickedRowIndex={clickedRowIndex}
         />
       </Modal>
+      <Modal open={!checkSecret} footer={null} width={600}>
+        <SecreteCode />
+      </Modal>
+
       {open && record && (
         <TeamDrawer
           placement="right"
@@ -202,22 +229,21 @@ const InviteUsers = ({
     setLoading(true);
 
     try {
-
       let payload = {
         email: inviteEmail,
         role_id: role,
-        team_uuid : clickedRowIndex,
-      }
-      console.log(payload)
+        team_uuid: clickedRowIndex,
+      };
+      console.log(payload);
       axiosClient
-          .post("/api/invites/inviteUsers",payload)
-          .then((res) => {
-            console.log(res.data);
-            navigate("/dashboard");
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        .post("/api/invites/inviteUsers", payload)
+        .then((res) => {
+          // console.log(res.data);
+          navigate("/dashboard");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       toast.success("Email sent Successfully");
       setInviteEmail("");
       setRole("");

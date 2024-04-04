@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 
-import { Button, notification, Popover, Space } from 'antd';
+import { Button, notification, Popover, Space } from "antd";
 
 import { useForm } from "react-hook-form";
 
@@ -14,6 +14,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import HashLoader from "react-spinners/HashLoader";
 
+import { useCookies } from "react-cookie";
+import CryptoJS from "crypto-js";
 
 const Signup = () => {
   const {
@@ -26,31 +28,72 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setCofirmPassword] = useState(false);
 
-  const [inviteDetail, setInviteDetail] = useState(JSON.parse(localStorage.getItem('inviteInfo')))
+  const [inviteDetail, setInviteDetail] = useState(
+    JSON.parse(localStorage.getItem("inviteInfo"))
+  );
+
+  const [deviceID, setDeviceID] = useState("");
+
+  const [cookies, setCookie] = useCookies(["SecretPublicDeviceID"]);
+
+  const generateUUID = () => {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+      /[xy]/g,
+      function (c) {
+        var r = (Math.random() * 16) | 0,
+          v = c === "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      }
+    );
+  };
+
+  const generateUniqueBrowserID = () => {
+    const userAgent = navigator.userAgent;
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+    const language = navigator.language;
+    const uniqueID =
+      userAgent + screenWidth + screenHeight + language + generateUUID();
+    return uniqueID;
+  };
+
+  const generateDeviceID = () => {
+    const id = cookies.ZirclyPublicDeviceID;
+    if (!id) {
+      const uniqueID = generateUniqueBrowserID();
+      const hashedID = CryptoJS.SHA256(uniqueID).toString(CryptoJS.enc.Hex);
+      setCookie("SecretPublicDeviceID", hashedID);
+      setDeviceID(hashedID);
+      return hashedID;
+    }
+    return id;
+  };
+
+  useEffect(() => {
+    generateDeviceID();
+  }, []);
 
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-
   const handleSignup = (data) => {
-
     setLoading(true);
 
-   const signupData = inviteDetail
+    const signupData = inviteDetail
       ? { ...data, team_uuid: inviteDetail.team_uuid, role: inviteDetail.role }
       : { ...data };
 
+    const allData = { ...signupData, device_id: deviceID };
     axiosClient
-      .post("/api/auth/register", signupData)
+      .post("/api/auth/register", allData)
       .then((res) => {
-        console.log(res);
         navigate("/emailverify");
         setLoading(false);
       })
       .catch((err) => {
         const response = err.response;
-        if (response && response?.status === 400) {;
+        if (response && response?.status === 400) {
           setLoading(false);
         } else {
           console.error("Error:", response?.status);
@@ -58,7 +101,6 @@ const Signup = () => {
       });
   };
 
-  
   return (
     <div>
       <div>
@@ -121,7 +163,7 @@ const Signup = () => {
                       </span>
                     )}
                   </div>
-                
+
                   <div>
                     <label
                       htmlFor="password"
@@ -246,7 +288,6 @@ const Signup = () => {
                     </Link>
                   </p>
                   {/* <Button onClick={() => openNotificationWithIcon('success')}>Success</Button> */}
-
                 </form>
               </div>
             </div>
@@ -255,15 +296,15 @@ const Signup = () => {
         <ToastContainer />
 
         {loading && (
-            <>
-              <div className="bg-[#aeaeca] opacity-[0.5] w-[100%] h-[100vh] absolute top-0 left-0  z-10"></div>
-              <div className="">
-                <p className="absolute top-[48%] left-[48%] z-50 ">
-                  <HashLoader color="#3197e8" />
-                </p>
-              </div>
-            </>
-          )}
+          <>
+            <div className="bg-[#aeaeca] opacity-[0.5] w-[100%] h-[100vh] absolute top-0 left-0  z-10"></div>
+            <div className="">
+              <p className="absolute top-[48%] left-[48%] z-50 ">
+                <HashLoader color="#3197e8" />
+              </p>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

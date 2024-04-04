@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../../src/commonComponents/Button";
 import { useForm } from "react-hook-form";
@@ -11,6 +11,10 @@ import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import axiosClient from "../axios-client";
 
 import OtpInput from "react-otp-input";
+import { useCookies } from "react-cookie";
+import Justification from "./Justfication";
+import SecreteCode from "./Login/SecretCode";
+import CryptoJS from "crypto-js";
 
 const Signin = () => {
   const {
@@ -30,9 +34,52 @@ const Signin = () => {
   const [errMessage, setErrMessage] = useState("");
   const [otpValue, setOtpValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const [justification, setJustification] = useState(false);
 
-  const [showPassword, setShowPassword] = useState(false);
+  const [deviceID, setDeviceID] = useState("");
 
+  const [cookies, setCookie] = useCookies(["SecretPublicDeviceID"]);
+
+  console.log("dfhewyugf");
+
+  const generateUUID = () => {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+      /[xy]/g,
+      function (c) {
+        var r = (Math.random() * 16) | 0,
+          v = c === "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      }
+    );
+  };
+
+  const generateUniqueBrowserID = () => {
+    const userAgent = navigator.userAgent;
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+    const language = navigator.language;
+    const uniqueID =
+      userAgent + screenWidth + screenHeight + language + generateUUID();
+    return uniqueID;
+  };
+
+  const generateDeviceID = () => {
+    const id = cookies.ZirclyPublicDeviceID;
+    if (!id) {
+      const uniqueID = generateUniqueBrowserID();
+      const hashedID = CryptoJS.SHA256(uniqueID).toString(CryptoJS.enc.Hex);
+      setCookie("SecretPublicDeviceID", hashedID);
+      setDeviceID(hashedID);
+      return hashedID;
+    }
+    return id;
+  };
+
+  useEffect(() => {
+    if (!cookies.hasOwnProperty("SecretPublicDeviceID")) {
+      generateDeviceID();
+    }
+  }, []);
   // ----------------Handling form visibilty an hidden-------------------------------------
   const handleButton = () => {
     setAdminAccess(!adminAccess);
@@ -49,8 +96,12 @@ const Signin = () => {
 
   const handleSignin = (data) => {
     setLoading(true);
+    let payLoad = {
+      ...data,
+      device_id: cookies,
+    };
     axiosClient
-      .post("/api/auth/login", data)
+      .post("/api/auth/login", payLoad)
       .then((res) => {
         setOtps(true);
         setLoading(false);
@@ -59,6 +110,10 @@ const Signin = () => {
         const response = err.response;
         if (response && response?.status === 401) {
           setAdminAccess(true);
+          setLoading(false);
+        }
+        if (response && response?.status === 409) {
+          setJustification(true);
           setLoading(false);
         } else {
           console.error("Error:", response?.status);
@@ -286,6 +341,11 @@ const Signin = () => {
           </>
         )}
       </div>
+      <Justification
+        justification={justification}
+        setJustification={setJustification}
+        cookies={cookies}
+      />
     </div>
   );
 };

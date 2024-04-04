@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("shares", {
+    await queryInterface.createTable("shares_users", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -22,11 +22,11 @@ module.exports = {
           key: "uuid",
         },
       },
-      team_uuid: {
+      user_uuid: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: "teams",
+          model: "users",
           key: "uuid",
         },
       },
@@ -56,6 +56,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("shares");
+    await queryInterface.dropTable("shares_users");
   },
 };

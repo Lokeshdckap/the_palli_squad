@@ -11,11 +11,27 @@ const shareController = require("../controllers/Dashboard/shareController");
 router.post(
   "/share-secrets",
   verifyAuthMiddleware.verifyToken,
-  shareController.encryptionData
+  shareController.shareSecrets
 );
 
-// router.get(
-//   "/secret-decryption/:uuid",
-//   verifyAuthMiddleware.verifyToken,
-//   secretController.decryptionData
-// );
+
+
+router.get(
+  "/getShareWithMe",
+  verifyAuthMiddleware.verifyToken,
+  shareController.getShareWithMe
+);
+
+router.get(
+  "/getShareWithTeams",
+  verifyAuthMiddleware.verifyToken,
+  shareController.getShareWithTeam
+);
+
+router.delete("/removeSharedSecrets/:uuid",
+verifyAuthMiddleware.verifyToken,
+shareController.removeSharedSecrets)
+
+
+
+module.exports = router;

@@ -46,4 +46,20 @@ router.delete(
   teamController.activeUserRemove
 );
 
+router.get(
+  "/getAllUsers",
+  verifyAuthMiddleware.verifyToken,
+  teamController.getAllUsers
+);
+
+
+router.get(
+  "/getAllTeamForSecrets",
+  verifyAuthMiddleware.verifyToken,
+  teamController.getAllTeamForSecrets
+);
+
+
+
+
 module.exports = router;

@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Header } from "../../Header/Header";
 import { useLocation, useParams } from "react-router-dom";
 import axiosClient from "../../axios-client";
-import SecretTable from "../../commonComponents/SecretTable";
-import SecretStoreForm from "../../commonComponents/SecretStoreForm";
+import SecretTableShare from "../../commonComponents/SecretTableShare";
+import Crypto from "crypto-js";
 
 export const ShareSecretComponent = () => {
   const params = useParams();
-  const [secrets, setSecrets] = useState([]);
+  const [shareSecrets, setShareSecrets] = useState([]);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,7 +24,7 @@ export const ShareSecretComponent = () => {
   const hash_id = queryParams.get("hash_id");
 
   useEffect(() => {
-    getAllSecretsForUsers();
+    getShareWithMe();
     if (authUser) {
       getDecrypted();
     }
@@ -40,11 +40,12 @@ export const ShareSecretComponent = () => {
     setIsModalOpen(false);
   };
 
-  const getAllSecretsForUsers = () => {
+  const getShareWithMe = () => {
     axiosClient
-      .get(`/api/secrets/getAllSecretsForUsers`)
+      .get(`/api/shares/getShareWithMe`)
       .then((res) => {
-        setSecrets(res.data.data);
+        console.log(res.data.users)
+        setShareSecrets(res.data.users)
       })
       .catch((err) => {
         console.log(err);
@@ -66,9 +67,21 @@ export const ShareSecretComponent = () => {
       return;
     }
 
-    let payLoad = {
-      passPhrase: password,
+    const encryptPassword = (encryptData) => {
+      const secretKey = process.env.REACT_APP_SECRET_KEY;
+      const securePassword = Crypto.AES.encrypt(
+        encryptData,
+        secretKey
+      ).toString();
+      return securePassword;
     };
+
+    const encryptSecret = encryptPassword(password)
+    
+    let payLoad = {
+      passPhrase: encryptSecret,
+    };
+
 
     axiosClient
       .post("/api/auth/checkPassPharse", payLoad)
@@ -90,6 +103,7 @@ export const ShareSecretComponent = () => {
         .then((res) => {
           if (res.status == 200) {
             if (res.data.deryptionData) {
+           
               setDecryptedData(res.data.deryptionData);
             }
             if (res.data.file) {
@@ -111,8 +125,8 @@ export const ShareSecretComponent = () => {
     <>
       <div>
         <div>
-          <SecretTable
-            secret={secrets}
+          <SecretTableShare
+            secret={shareSecrets}
             setPassword={setPassword}
             password={password}
             handleInputChange={handleInputChange}

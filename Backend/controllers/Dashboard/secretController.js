@@ -250,6 +250,7 @@ const decryptionFile = async (fileId) => {
 };
 
 const encryptionData = async (req, res) => {
+  
   try {
     const encryptedData = req.body.secretData;
 
@@ -264,6 +265,8 @@ const encryptionData = async (req, res) => {
     const username = req.body.username;
 
     const secretData = secretDataDecryption;
+
+    const description = req.body.description
 
     let encryptedFile;
     let encryptedFilePath;
@@ -284,9 +287,12 @@ const encryptionData = async (req, res) => {
 
     const encryptionData = await encrypted(secretData);
 
+    const encryptionDescription = await encrypted(description);
+
     const createSecrets = await secrets.create({
       title: title,
       username: username,
+      description:encryptionDescription,
       user_uuid: req.user.id,
       uuid: uuid.v4(),
       encrypted_password: encryptionData,
@@ -332,11 +338,13 @@ const decryptionData = async (req, res) => {
 
     if (findSecrets) {
       const deryptionData = await decrypted(findSecrets.encrypted_password);
+      const decryptedDescription = await decrypted(findSecrets.description);
 
       if (deryptionData != null) {
         return res.status(200).json({
           Success: "Your Secrets fetched Sucessfully",
           deryptionData,
+          decryptedDescription,
           file,
           encryptedFileType: findSecrets.encrypted_file_type,
           encryptedFileName: findSecrets.encrypted_fileName,
@@ -440,6 +448,7 @@ const getAllSecretsForUsers = async (req, res) => {
       title: secret.title,
       password: secret.encrypted_password,
       encrypted_attachment_hex: secret.encrypted_fileName,
+      description : secret.description
     }));
 
     if (allSecrets)

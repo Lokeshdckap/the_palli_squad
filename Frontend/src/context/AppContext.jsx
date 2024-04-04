@@ -11,6 +11,8 @@ const MyContextProvider = ({ children }) => {
 
   const [role, setRole] = useState(null);
 
+  const[checkSecret,setCheckSecret]=useState(false)
+
   useEffect(() => {
 
     userInfo();
@@ -43,6 +45,7 @@ const MyContextProvider = ({ children }) => {
       .then((res) => {
         
         setUserDetail(res.data.userInfo);
+        setCheckSecret(res.data.is_secretCode)
       
       })
       .catch((err) => {
@@ -56,7 +59,9 @@ const MyContextProvider = ({ children }) => {
         userDetail,
         userInfo,
         role,
-        getTeam
+        getTeam,
+        checkSecret,
+        setCheckSecret
       }}
     >
       {children}

@@ -4,6 +4,14 @@ const db = require("./utils/database");
 
 const Roles = db.role_types;
 
+const ShareUser = db.shares_users;
+
+const User = db.users;
+
+const { Op, where } = require("sequelize");
+
+const cron = require("node-cron");
+
 const cors = require("cors");
 
 const app = express();
@@ -32,7 +40,6 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-
 const apiBasePath = "/api";
 
 const authRoute = require("./routes/authentication");
@@ -47,7 +54,7 @@ const inviteRoute = require("./routes/invite");
 
 const secretRoute = require("./routes/secrets");
 
-const shareRoute = require("./routes/share")
+const shareRoute = require("./routes/share");
 
 app.use(`${apiBasePath}/auth`, authRoute);
 
@@ -62,7 +69,6 @@ app.use(`${apiBasePath}/invites`, inviteRoute);
 app.use(`${apiBasePath}/secrets`, secretRoute);
 
 app.use(`${apiBasePath}/shares`, shareRoute);
-
 
 app.set("views", path.join(__dirname, "views"));
 
@@ -94,6 +100,58 @@ const blukCreation = async () => {
 };
 
 blukCreation();
+
+
+cron.schedule("* * * * *", async () => {
+  try {
+    const expiredRecords = await ShareUser.findAll({
+      where: {
+        expiration_date: {
+          [Op.lt]: new Date(), // Less than current time
+        },
+      },
+    });
+
+    await ShareUser.destroy({
+      where: {
+        expiration_date: {
+          [Op.lt]: new Date(), // Less than current time
+        },
+      },
+    });
+    console.log(`Deleted ${expiredRecords.length} expired records.`);
+  } catch (error) {
+    console.error("Error deleting expired records:", error);
+  }
+});
+
+
+// const creationAdmin = async () => {
+//   try {
+//     const existsadmin = await User.findAll({});
+//     if (existsRoles.length === 0) {
+//       await User.bulkCreate([
+//         { username: "Super Admin"
+          
+//        },
+//         { name: "collaborator" },
+//         { name: "viewer" },
+//       ])
+//         .then(() => {
+//           console.log("Default roles inserted successfully.");
+//         })
+//         .catch((error) => {
+//           console.error("Error inserting default roles:", error);
+//         });
+//     } else {
+//       console.log("Roles already exist.");
+//     }
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+
+// creationAdmin();
 
 const PORT = process.env.PORT || 3000;
 

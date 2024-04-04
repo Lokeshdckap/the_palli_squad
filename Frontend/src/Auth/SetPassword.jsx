@@ -19,7 +19,7 @@ const SetPassword = ({
   return (
     <>
       <Modal
-        title="Passphrase"
+        title="SecretCode"
         open={isModalOpen}
         footer={false}
         onOk={handleOk}
@@ -28,7 +28,7 @@ const SetPassword = ({
         <div>
           <div className="py-5">
             <p className="text-xl text-center py-3">
-              Please Enter Your Passphrase
+              Please Enter Your SecretCode
             </p>
           </div>
           <div>
@@ -38,7 +38,7 @@ const SetPassword = ({
             >
               <input
                 type="password"
-                placeholder="Enter Your Passphrase"
+                placeholder="Enter Your SecretCode"
                 className="py-1 w-[100%] border px-1 text-md"
                 value={password}
                 onChange={handleInputChange}
