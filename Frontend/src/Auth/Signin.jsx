@@ -36,6 +36,8 @@ const Signin = () => {
   const [loading, setLoading] = useState(false);
   const [justification, setJustification] = useState(false);
 
+  const [showPassword, setShowPassword] = useState(false);
+
   const [deviceID, setDeviceID] = useState("");
 
   const [cookies, setCookie] = useCookies(["SecretPublicDeviceID"]);
