@@ -124,6 +124,8 @@ const Signup = () => {
                     </label>
                     <input
                       type="username"
+                      autocomplete="off"
+
                       id="username"
                       className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="username"
@@ -146,6 +148,8 @@ const Signup = () => {
                     <input
                       type="text"
                       id="email"
+                      autocomplete="off"
+
                       className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="name@company.com"
                       required=""
@@ -184,6 +188,7 @@ const Signup = () => {
                         <input
                           type={showPassword ? "text" : "password"}
                           id="password"
+                          
                           placeholder="password"
                           className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           required=""

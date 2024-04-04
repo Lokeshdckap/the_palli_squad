@@ -93,62 +93,66 @@ const login = async (req, res) => {
       },
     });
 
-    const unAuthor = await Unauthorization.findOne({
-      where: {
-        user_uuid: user.uuid,
-        device_ip: req.body?.device_id.SecretPublicDeviceID,
-        isApproved: 1,
-      },
-    });
-
-    if (user.isApproved === 0) {
-      return res.status(401).json({
-        msg: "waiting for super admin approval",
+    if (user !== null) {
+      const unAuthor = await Unauthorization.findOne({
+        where: {
+          user_uuid: user.uuid,
+          device_ip: req.body?.device_id.SecretPublicDeviceID,
+          isApproved: 1,
+        },
       });
-    }
 
-    if (
-      user.device_ip != req.body.device_id.SecretPublicDeviceID &&
-      !unAuthor
-    ) {
-      return res.status(409).json({
-        msg: "unauthorized device logins",
-      });
-    }
-
-    //if user email is found, compare password with bcrypt
-    if (user && user.password) {
-      const isSame = await bcrypt.compare(password, user.password);
-
-      if (isSame) {
-        // Generate a 6-digit OTP
-
-        const otp = otpGenerator.generate(4, {
-          upperCase: false,
-          specialChars: false,
-          alphabets: false,
+      if (user.isApproved === 0) {
+        return res.status(401).json({
+          msg: "waiting for super admin approval",
         });
-        try {
-          await sendEmail(user.email, "OTP Verification", otp);
+      }
 
-          await OTP.create({
-            uuid: uuid.v4(),
-            user_uuid: user.uuid,
-            otp: otp,
-            expires_at: new Date(Date.now() + 3600000),
-          });
+      if (
+        user.device_ip != req.body.device_id.SecretPublicDeviceID &&
+        !unAuthor
+      ) {
+        return res.status(409).json({
+          msg: "unauthorized device logins",
+        });
+      }
 
-          return res.status(200).json({
-            msg: "OTP Message sent successfully",
+      //if user email is found, compare password with bcrypt
+      if (user && user.password) {
+        const isSame = await bcrypt.compare(password, user.password);
+
+        if (isSame) {
+          // Generate a 6-digit OTP
+
+          const otp = otpGenerator.generate(4, {
+            upperCase: false,
+            specialChars: false,
+            alphabets: false,
           });
-        } catch (err) {
-          console.error("Error sending OTP:", err);
+          try {
+            await sendEmail(user.email, "OTP Verification", otp);
+
+            await OTP.create({
+              uuid: uuid.v4(),
+              user_uuid: user.uuid,
+              otp: otp,
+              expires_at: new Date(Date.now() + 3600000),
+            });
+
+            return res.status(200).json({
+              msg: "OTP Message sent successfully",
+            });
+          } catch (err) {
+            console.error("Error sending OTP:", err);
+          }
+        } else {
+          return res.status(401).send({ password: "Invaild Crendtials" });
         }
       } else {
-        return res.status(401).send({ password: "Invaild Crendtials" });
+        return res.status(401).send({ email: "Invaild Crendtials" });
       }
     } else {
-      return res.status(401).send({ email: "Invaild Crendtials" });
+      return res.status(404).send({ email: "Invaild Crendtials" });
     }
   } catch (error) {
     console.log(error);

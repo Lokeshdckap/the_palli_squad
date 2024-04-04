@@ -187,6 +187,7 @@ const Signin = () => {
                             message: "Invalid email address",
                           },
                         })}
+                        autocomplete="off"
                       />
                       {errors.email && (
                         <span className="text-red-500 text-sm">
