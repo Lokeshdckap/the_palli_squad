@@ -203,50 +203,13 @@ const TableUserComponent = ({ existUserList,assignRole }) => {
           "Viewer"
         ) : "null",
     },
-    // {
-    //   title: "Operation",
-    //   dataIndex: "Operation",
-    //   width: "10%",
-    //   render: (_, record) => {
-    //     const editable = isEditing(record);
-    //     return editable ? (
-    //       <span>
-    //         <Typography.Link onClick={() => save(record.uuid)}>
-    //           Save
-    //         </Typography.Link>
-    //         <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-    //           <a style={{ paddingLeft: "10px" }}>Cancel</a>
-    //         </Popconfirm>
-    //       </span>
-    //     ) : (
-    //       <Typography.Link
-    //         disabled={editingKey !== ""}
-    //         onClick={() => edit(record)}
-    //       >
-    //         Edit
-    //       </Typography.Link>
-    //     );
-    //   },
-    // },
-    // {
-    //   title: "Remove",
-    //   dataIndex: "Remove",
-    //   width: "10%",
-    //   render: (_, record) => (
-    //     <Popconfirm
-    //       title="Sure to remove?"
-    //       onConfirm={() => remove(record.uuid)}
-    //     >
-    //       <a style={{ color: "red" }}>Remove</a>
-    //     </Popconfirm>
-    //   ),
-    // },
+
     {
       title: "Operation",
       dataIndex: "Operation",
       width: "10%",
       render: (_, record) => {
-        if (assignRole != 1) {
+        if (assignRole && assignRole != 1) {
           return (
             <Typography.Link disabled>
               No Permission
@@ -279,7 +242,8 @@ const TableUserComponent = ({ existUserList,assignRole }) => {
       dataIndex: "Remove",
       width: "10%",
       render: (_, record) => {
-        if (assignRole !== 1) {
+        if (assignRole && assignRole !== 1) {
+          console.log(assignRole,"fwef")
           return (
             <Typography.Link disabled>
               No Permission

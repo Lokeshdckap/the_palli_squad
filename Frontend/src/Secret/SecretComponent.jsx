@@ -7,18 +7,24 @@ import { ShareSecretComponent } from "./ShareWithMe/ShareSecretComponent";
 
 export const SecretComponent = () => {
   const param = useParams();
+   console.log(window.location.pathname)
+  console.log(window.location.pathname === "/secrets/mysecrets/" )
 
   return (
     <div>
     <Header param={param} />
     <div>
-      {window.location.pathname === "/secrets/mysecrets" ? (
-        <MySecretComponent />
-      ) : window.location.pathname === "/secrets/teamsecrets" ? (
+      {window.location.pathname === "/secrets/mysecrets/" ? (
+        <MySecretComponent
+          
+         />
+      ) : window.location.pathname === "/secrets/teamsecrets/" ? (
         <TeamSecretComponent />
-      ) : (
+      ) 
+      : (
         <ShareSecretComponent />
-      )}
+      )
+      }
     </div>
   </div>
   );

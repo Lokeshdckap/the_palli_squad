@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Header } from "../Header/Header";
 import TeamTableComponent from "../commonComponents/TeamTableComponent";
 import TeamName from "./TeamName";
-import InviteUsers from "./InviteUsers";
 import CreateTeamForm from "./CreateTeamForm";
 import axiosClient from "../axios-client";
 import { useParams } from "react-router-dom";

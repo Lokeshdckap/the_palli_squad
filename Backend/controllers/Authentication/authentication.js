@@ -3,10 +3,12 @@ const db = require("../../utils/database");
 const path = require("path");
 const fs = require("fs");
 const User = db.users;
+const Unauthorization = db.unAuthorizedDevice;
 const emailVerificationToken = db.email_verification_token; // Email Verification Token
 const OTP = db.otp_verifications;
 const passPhrase = db.pass_pharse;
 const UserTeams = db.user_team_members;
+const CryptoJS = require("crypto-js");
 const crypto = require("crypto");
 const tokens = require("../../utils/generateAuthToken");
 const generateAuthToken = tokens.generateAuthToken;
@@ -17,10 +19,10 @@ const twilio = require("twilio");
 const fast2sms = require("fast-two-sms");
 const axios = require("axios");
 const IP = require("ip");
+const { Op, where } = require("sequelize");
 
 const register = async (req, res) => {
   try {
-
     const { username, email, password } = req.body;
 
     const userExists = await User.findOne({
@@ -35,7 +37,7 @@ const register = async (req, res) => {
       password: await bcrypt.hash(password, 15),
       mobile_no: req.body.mobile_no,
       uuid: uuid.v4(),
-      device_ip: IP.address(),
+      device_ip: req.body.device_id,
     });
 
     if (req.body.team_uuid) {
@@ -90,7 +92,14 @@ const login = async (req, res) => {
         email: email,
       },
     });
-    // write a email verify
+
+    const unAuthor = await Unauthorization.findOne({
+      where: {
+        user_uuid: user.uuid,
+        device_ip: req.body?.device_id.SecretPublicDeviceID,
+        isApproved: 1,
+      },
+    });
 
     if (user.isApproved === 0) {
       return res.status(401).json({
@@ -98,11 +107,14 @@ const login = async (req, res) => {
       });
     }
 
-    // if (user.device_ip != IP.address()) {
-    //   return res.status(401).json({
-    //     msg: "unauthorized device logins",
-    //   });
-    // }
+    if (
+      user.device_ip != req.body.device_id.SecretPublicDeviceID &&
+      !unAuthor
+    ) {
+      return res.status(409).json({
+        msg: "unauthorized device logins",
+      });
+    }
 
     //if user email is found, compare password with bcrypt
     if (user && user.password) {
@@ -139,6 +151,7 @@ const login = async (req, res) => {
       return res.status(401).send({ email: "Invaild Crendtials" });
     }
   } catch (error) {
+    console.log(error);
     return res.status(400).send({ email: "Email Not Verified" });
   }
 };
@@ -214,21 +227,17 @@ const verifyEmail = async (req, res) => {
 const verify_otp = async (req, res) => {
   const otp = req.body.otp;
 
-
   const userOtp = await OTP.findOne({
     where: {
       otp: otp,
     },
   });
 
-
   const findUser = await User.findOne({
     where: {
       uuid: userOtp?.user_uuid,
     },
   });
-
-
 
   if (userOtp && findUser) {
     if (findUser.isVerified && findUser.isApproved) {
@@ -252,6 +261,15 @@ const verify_otp = async (req, res) => {
 const passphrase = async (req, res) => {
   try {
     const passphrased = req.body.passPhrase;
+
+    console.log(req.body);
+    const secretKey = "akash@123";
+
+    const passphrasedDecryption = CryptoJS.AES.decrypt(
+      passphrased,
+      secretKey
+    ).toString(CryptoJS.enc.Utf8);
+
     const checkPassPhrase = await passPhrase.findOne({
       where: {
         user_uuid: req.user.id,
@@ -261,7 +279,7 @@ const passphrase = async (req, res) => {
     if (!checkPassPhrase) {
       const createPassPhrase = await passPhrase.create({
         uuid: uuid.v4(),
-        pass_pharse: await bcrypt.hash(passphrased, 15),
+        pass_pharse: await bcrypt.hash(passphrasedDecryption, 15),
         user_uuid: req.user.id,
       });
       return res.status(200).json({
@@ -274,6 +292,7 @@ const passphrase = async (req, res) => {
       });
     }
   } catch (err) {
+    console.log(err);
     return res.status(500).json({
       err: err,
     });
@@ -284,6 +303,13 @@ const checkPassPhrase = async (req, res) => {
   try {
     const passPhrased = req.body.passPhrase;
 
+    const secretKey = "akash@123";
+
+    const passphrasedDecryption = CryptoJS.AES.decrypt(
+      passPhrased,
+      secretKey
+    ).toString(CryptoJS.enc.Utf8);
+
     const user = await passPhrase.findOne({
       where: {
         user_uuid: req.user.id,
@@ -291,22 +317,26 @@ const checkPassPhrase = async (req, res) => {
     });
 
     if (user && user.pass_pharse) {
-      await bcrypt.compare(passPhrased, user.pass_pharse, (err, isSame) => {
-        if (err) {
-          console.log(err);
-          return res.status(500).json({ error: "Internal Server Error" });
+      await bcrypt.compare(
+        passphrasedDecryption,
+        user.pass_pharse,
+        (err, isSame) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+          }
+          if (isSame) {
+            return res.status(200).json({
+              data: true,
+              msg: "You are now accessing the PassPhrase",
+            });
+          } else {
+            return res.status(404).json({
+              msg: "Unauthorized Access",
+            });
+          }
         }
-        if (isSame) {
-          return res.status(200).json({
-            data : true,
-            msg: "You are now accessing the PassPhrase",
-          });
-        } else {
-          return res.status(404).json({
-            msg: "Unauthorized Access",
-          });
-        }
-      });
+      );
     } else {
       return res.status(404).json({
         msg: "Unauthorized Access",

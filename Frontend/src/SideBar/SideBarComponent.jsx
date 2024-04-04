@@ -80,12 +80,12 @@ export const SideBarComponent = ({ param }) => {
                 }}
               >
                 <Link
-                  to={"/secrets/mysecrets"}
+                  to={"/secrets/mysecrets/"}
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div
                     className={`hover:bg-[#7d8285] w-[100%] m-auto pl-5 my-1 rounded-sm ${
-                      window.location.pathname === "/secrets/mysecrets" &&
+                      window.location.pathname === "/secrets/mysecrets/" &&
                       "bg-[#7d8285]"
                     } `}
                   >
@@ -95,12 +95,12 @@ export const SideBarComponent = ({ param }) => {
                   </div>
                 </Link>
                 <Link
-                  to={"secrets/teamsecrets"}
+                  to={"/secrets/teamsecrets/"}
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div
                     className={`hover:bg-[#7d8285] w-[100%] m-auto pl-5 mx-1 rounded-sm ${
-                      window.location.pathname === "/secrets/teamsecrets" &&
+                      window.location.pathname === "/secrets/teamsecrets/" &&
                       "bg-[#7d8285]"
                     } `}
                   >
@@ -110,12 +110,12 @@ export const SideBarComponent = ({ param }) => {
                   </div>
                 </Link>
                 <Link
-                  to={"secrets/sharewithme"}
+                  to={"/secrets/sharewithme"}
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div
                     className={`hover:bg-[#7d8285] w-[100%] m-auto pl-5 mx-1 rounded-sm ${
-                      window.location.pathname === "/secrets/sharewithme" &&
+                      window.location.pathname === "/secrets/sharewithme/" &&
                       "bg-[#7d8285]"
                     } `}
                   >

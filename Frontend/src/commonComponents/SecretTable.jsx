@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axiosClient from "../axios-client";
-import { PDFDocument, StandardFonts } from "pdf-lib";
-import { saveAs } from "file-saver";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
 import {
   EyeOutlined,
   EyeInvisibleOutlined,
   ArrowDownOutlined,
+  ShareAltOutlined,
 } from "@ant-design/icons";
 import {
   Form,
@@ -14,15 +15,18 @@ import {
   Popconfirm,
   Table,
   Typography,
-  Select,
+  Select as AntSelect,
   Upload,
   Button,
+  Space,
+  Modal,
+  AutoComplete,
 } from "antd";
 import SetPassword from "../Auth/SetPassword";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
-const { Option } = Select;
-
+const { Option } = AntSelect;
+const animatedComponents = makeAnimated();
 const EditableCell = ({
   editing,
   dataIndex,
@@ -96,35 +100,50 @@ const SecretTable = ({
   decryptedAttachments,
   decryptedFileType,
   decryptedFileName,
+  decryptedDescription,
+  userList,
+  teamList,
 }) => {
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
   const [editingKey, setEditingKey] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState("");
+  const [showDescription, setshowDescription] = useState("");
+
   const [showAPIKey, setShowAPIKey] = useState(false);
   const [showAttachments, setShowAttachments] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [selectSecret, setSelectedSecret] = useState(null);
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const hash_id = queryParams.get("hash_id");
-
+  const navigate = useNavigate();
   const toggleVisibility = async (type, value, record) => {
     switch (type) {
       case "password":
         if (value == false) {
           setAuthUser(false);
+          setShowPassword("");
         }
-        setShowPassword(value);
+        setShowPassword(record.key);
         setIsModalOpen(value);
-        break;
-      case "apiKey":
-        setShowAPIKey(!showAPIKey);
         break;
       case "attachments":
         if (value == false) {
           setAuthUser(false);
+          setShowAttachments("");
         }
-        setShowAttachments(value);
+        setShowAttachments(record.key);
+        setIsModalOpen(value);
+        break;
+      case "description":
+        if (value == false) {
+          setAuthUser(false);
+          setshowDescription("");
+        }
+        setshowDescription(record.key);
         setIsModalOpen(value);
         break;
       default:
@@ -140,13 +159,17 @@ const SecretTable = ({
 
     switch (type) {
       case "password":
-        return record.showPassword && authUser ? decryptedData : maskedText;
-      // case "apiKey":
-      //   return showAPIKey && authUser ? truncatedText : maskedText;
+        return showPassword === record.key && authUser
+          ? decryptedData
+          : maskedText;
+      case "description":
+        return showDescription === record.key && authUser
+          ? decryptedDescription
+          : maskedText;
       case "attachments":
-        return showAttachments && authUser
+        return showAttachments === record.key && authUser
           ? decryptedFileName
-          : maskedText
+          : maskedText;
       default:
         return truncatedText; // Default behavior if type is not recognized
     }
@@ -154,7 +177,7 @@ const SecretTable = ({
   const getIcon = (type, record) => {
     switch (type) {
       case "password":
-        return record.showPassword && authUser
+        return showPassword === record.key && authUser
           ? (console.log("Rendering EyeOutlined"),
             (
               <EyeOutlined
@@ -169,38 +192,42 @@ const SecretTable = ({
                 onClick={() => toggleVisibility("password", true, record)}
               />
             ));
-
-      // case "apiKey":
-      //   return showAPIKey && authUser ? (
-      //     <EyeOutlined
-      //       style={{ paddingLeft: "8px" }}
-      //       onClick={() => toggleVisibility("apiKey")}
-      //     />
-      //   ) : (
-      //     <EyeInvisibleOutlined
-      //       style={{ paddingLeft: "8px" }}
-      //       onClick={() => toggleVisibility("apiKey")}
-      //     />
-      //   );
-
+      case "description":
+        return showDescription === record.key && authUser
+          ? (console.log("Rendering EyeOutlined"),
+            (
+              <EyeOutlined
+                style={{ paddingLeft: "8px" }}
+                onClick={() => toggleVisibility("description", false, record)}
+              />
+            ))
+          : (console.log("Rendering EyeInvisibleOutlined"),
+            (
+              record.description ? 
+              <EyeInvisibleOutlined
+                style={{ paddingLeft: "8px" }}
+                onClick={() => toggleVisibility("description", true, record)}
+              />:<>-</>
+            ));
       case "attachments":
-        return showAttachments && authUser ? (
+        return showAttachments === record.key && authUser ? (
           <ArrowDownOutlined
             style={{ marginLeft: "10px" }}
-            onClick={() => downloadAttachments(false)}
+            onClick={() => downloadAttachments(false, record)}
           />
         ) : (
+          record.attachments ?
           <EyeInvisibleOutlined
             style={{ paddingLeft: "8px" }}
             onClick={() => toggleVisibility("attachments", true, record)}
-          />
+          />:<>-</>
         );
       default:
         return null;
     }
   };
-  async function downloadAttachments(value) {
-    toggleVisibility("attachments", value);
+  async function downloadAttachments(value, record) {
+    toggleVisibility("attachments", value, record);
 
     if (authUser) {
       const fileType = getFileType(decryptedFileType); // Extract file type from the file name
@@ -239,12 +266,14 @@ const SecretTable = ({
     // Default to octet-stream if the extension is not recognized
     return mimeTypeMap[extension] || "application/octet-stream";
   };
+  
 
   useEffect(() => {
     updateData();
   }, [secret]);
 
   const updateData = () => {
+    console.log(secret,"jioj")
     const updatedData = secret.map((secrets) => ({
       id: secrets.uuid,
       key: secrets.uuid,
@@ -252,7 +281,7 @@ const SecretTable = ({
       title: secrets.title,
       password: secrets.password,
       attachments: secrets.encrypted_attachment_hex,
-      showPassword: false,
+      description: secrets.description,
     }));
 
     setData(updatedData);
@@ -327,6 +356,65 @@ const SecretTable = ({
     setData(newData);
   };
 
+  const handleShareClick = (data) => {
+    setVisible(true);
+    setSelectedSecret(data.id);
+  };
+  const handleModalCancel = () => {
+    setVisible(false);
+  };
+  const [timeValue, setTimeValue] = useState("");
+  const [reactSelectValue, setReactSelectValue] = useState([]);
+  const [timeValueTeam, setTimeValueTeam] = useState("");
+  const [reactSelectValueTeam, setReactSelectValueTeam] = useState([]);
+
+  const [timeOptions] = useState([
+    { label: "5 minutes", value: "5 minutes" },
+    { label: "15 minutes", value: "15 minutes" },
+    { label: "30 minutes", value: "30 minutes" },
+    { label: "1 hour", value: "1 hour" },
+    { label: "More than 1 hour", value: "more" },
+  ]);
+
+  const handleTimeChange = (value) => {
+    setTimeValue(value);
+  };
+
+  const handleTimeChangeTeam = (value) => {
+    setTimeValueTeam(value);
+  };
+
+  const handleReactSelectChangeTeam = (value) => {
+    setReactSelectValueTeam(value);
+  };
+
+  const handleReactSelectChange = (value) => {
+    setReactSelectValue(value);
+  };
+
+  const handleShare = async () => {
+    let payLoad = {
+      email: reactSelectValue,
+      time_limit: timeValue ? timeValue : timeValueTeam,
+      team_uuid: reactSelectValueTeam,
+      secret_uuid: selectSecret,
+    };
+    axiosClient
+      .post("/api/shares/share-secrets", payLoad)
+      .then((res) => {
+        if (res.status === 200) {
+          setReactSelectValue([]);
+          setReactSelectValueTeam([]);
+          setSelectedSecret(null);
+          setTimeValue("");
+          setTimeValueTeam("");
+          setVisible(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   const columns = [
     {
       title: "S.no",
@@ -349,15 +437,17 @@ const SecretTable = ({
     },
     {
       title: "Description",
-      dataIndex: "Description",
+      dataIndex: "description",
       width: "15%",
-      editable: true,
-      //   render: (text) => (
-      //     <span>
-      //       {renderContent(text, "apiKey")}
-      //       {getIcon("apiKey")}
-      //     </span>
-      //   ),
+      ellipsis: true, // Enable ellipsis for long content
+      render: (text, record) => (
+        <>
+          <span>{renderContent(text, "description", record)}</span>
+          <Link to={`/secrets/mysecrets/?hash_id=${record.id}`}>
+            {getIcon("description", record)}
+          </Link>
+        </>
+      ),
     },
     {
       title: "Password",
@@ -368,7 +458,7 @@ const SecretTable = ({
       render: (text, record) => (
         <>
           <span>{renderContent(text, "password", record)}</span>
-          <Link to={`/secrets/?hash_id=${record.id}`}>
+          <Link to={`/secrets/mysecrets/?hash_id=${record.id}`}>
             {getIcon("password", record)}
           </Link>
         </>
@@ -378,14 +468,14 @@ const SecretTable = ({
     {
       title: "Attachments",
       dataIndex: "attachments",
-      width: "15%",
+      width: "25%",
       editable: true,
       ellipsis: true, // Enable ellipsis for long content
       render: (text, record) => (
         <>
-          <span>{renderContent(text, "attachments")}</span>
-          <Link to={`/secrets/?hash_id=${record.id}`}>
-            {getIcon("attachments")}
+          <span>{renderContent(text, "attachments", record)}</span>
+          <Link to={`/secrets/mysecrets/?hash_id=${record.id}`}>
+            {getIcon("attachments", record)}
           </Link>
         </>
       ),
@@ -393,16 +483,17 @@ const SecretTable = ({
 
     {
       title: "Share",
-      dataIndex: "Share",
+      dataIndex: "share",
       width: "10%",
-      //   render: (text) => (
-      //     <span>
-      //       {renderContent(text, "apiKey")}
-      //       {getIcon("apiKey")}
-      //     </span>
-      //   ),
+      render: (text, record) => (
+        <Space size="large">
+          <ShareAltOutlined
+            onClick={() => handleShareClick(record)}
+            style={{ fontSize: "20px" }}
+          />
+        </Space>
+      ),
     },
-
 
     {
       title: "Operation",
@@ -492,6 +583,87 @@ const SecretTable = ({
           }}
         />
       </Form>
+      <Modal
+        title="Share Secrets Users and Teams"
+        open={visible}
+        onCancel={handleModalCancel}
+        onOk={() => {
+          handleShare();
+        }}
+        width={600}
+        okText="Share"
+      >
+        <div
+          style={{
+            marginBottom: "16px",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <span style={{ marginRight: "8px" }}>UserEmail : </span>
+          <Select
+            components={animatedComponents}
+            defaultValue={""}
+            isMulti
+            name="colors"
+            options={userList}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            value={reactSelectValue}
+            onChange={handleReactSelectChange}
+          />
+          <span style={{ marginRight: "15px", marginLeft: "15px" }}>
+            Time Limit :{" "}
+          </span>
+          <AntSelect
+            style={{ width: 150 }}
+            onChange={handleTimeChange}
+            value={timeValue}
+          >
+            {timeOptions.map((option) => (
+              <Option key={option.value} value={option.value}>
+                {option.label}
+              </Option>
+            ))}
+          </AntSelect>
+        </div>
+
+        <div
+          style={{
+            marginBottom: "16px",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <span style={{ marginRight: "8px" }}>TeamName : </span>
+          <Select
+            components={animatedComponents}
+            defaultValue={""}
+            isMulti
+            name="colors"
+            options={teamList}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            value={reactSelectValueTeam}
+            onChange={handleReactSelectChangeTeam}
+          />
+
+          <span style={{ marginRight: "15px", marginLeft: "15px" }}>
+            Time Limit :{" "}
+          </span>
+          <AntSelect
+            style={{ width: 150 }}
+            onChange={handleTimeChangeTeam}
+            value={timeValueTeam}
+          >
+            {timeOptions.map((option) => (
+              <Option key={option.value} value={option.value}>
+                {option.label}
+              </Option>
+            ))}
+          </AntSelect>
+        </div>
+      </Modal>
     </>
   );
 };

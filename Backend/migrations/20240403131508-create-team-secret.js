@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("shares", {
+    await queryInterface.createTable("team_secrets", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -14,14 +14,6 @@ module.exports = {
         unique: true,
         allowNull: false,
       },
-      secret_uuid: {
-        type: Sequelize.UUID,
-        allowNull: false,
-        references: {
-          model: "secrets",
-          key: "uuid",
-        },
-      },
       team_uuid: {
         type: Sequelize.UUID,
         allowNull: false,
@@ -30,20 +22,13 @@ module.exports = {
           key: "uuid",
         },
       },
-      share_uuid: {
+      secret_uuid: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: "users",
+          model: "secrets",
           key: "uuid",
         },
-      },
-      access_type: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-      },
-      expiration_date: {
-        type: Sequelize.DATE,
       },
       createdAt: {
         allowNull: false,
@@ -56,6 +41,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("shares");
+    await queryInterface.dropTable("team_secrets");
   },
 };

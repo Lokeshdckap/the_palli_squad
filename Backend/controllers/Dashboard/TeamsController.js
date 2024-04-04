@@ -82,18 +82,23 @@ const createTeams = async (req, res) => {
   const getAllTeam = async (req, res) => {
     try {
       const user = req.user.id;
-      const query = `SELECT user_team_members.*, teams.*, users.*, user_team_members.role_type
-      FROM user_team_members
-      INNER JOIN teams ON user_team_members.team_uuid = teams.uuid
-      INNER JOIN users ON user_team_members.user_uuid = users.uuid
-      WHERE users.uuid = :user;`;
+      const query = `
+        SELECT teams.uuid as team_uuid, teams.name as team_name, 
+        COUNT(user_team_members.user_uuid) as member_count,
+        user_team_members.role_type
+        FROM user_team_members
+        INNER JOIN teams ON user_team_members.team_uuid = teams.uuid
+        INNER JOIN users ON user_team_members.user_uuid = users.uuid
+        WHERE users.uuid = :user
+        GROUP BY teams.uuid, teams.name, user_team_members.role_type;
+      `;
   
       const [getAllTeam] = await sequelize.query(query, {
         replacements: { user },
       });
       return res.status(200).send({
         getAllTeam,
-        msg: "Sucessfully Fetched All Teams",
+        msg: "Successfully Fetched All Teams",
       });
     } catch (err) {
       return res.status(500).send({
@@ -101,6 +106,9 @@ const createTeams = async (req, res) => {
       });
     }
   };
+
+  
+  
 
   const activeUserRemove = async (req, res) => {
     const user_uuid = req.query.uuid;
@@ -170,11 +178,72 @@ const teamNameUpdate = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.findAll({
+      where: {
+        [Op.and]: [
+          {
+            uuid: {
+              [Op.not]: req.user.id,
+            },
+          },
+          {
+            isApproved: 1,
+          },
+        ],
+      },
+    });
+
+    const data = users.map((user) => ({ value: user.email, label: user.email }));
+    return res.status(200).json({
+      users: data,
+      msg: "Users fetching Success",
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      msg: "Users fetching error",
+    });
+  }
+};
+
+
+const getAllTeamForSecrets = async (req, res) => {
+  try {
+    const user = req.user.id;
+    const query = `SELECT user_team_members.*, teams.*, users.*, user_team_members.role_type
+      FROM user_team_members
+      INNER JOIN teams ON user_team_members.team_uuid = teams.uuid
+      INNER JOIN users ON user_team_members.user_uuid = users.uuid
+      WHERE users.uuid = :user AND user_team_members.role_type != 3;`;
+  
+    const [getAllTeam] = await sequelize.query(query, {
+      replacements: { user },
+    });
+    const data = getAllTeam.map((team) => ({ value: team.team_uuid, label: team.name }));
+    return res.status(200).json({
+      teams:data,
+      msg: "Successfully Fetched All Teams",
+    });
+  } catch (error) {
+    // Handle errors
+    return res.status(500).send({ error: "Internal Server Error" });
+  }
+  
+};
+
+
+
+
+
   module.exports = {
     createTeams,
     getTeam,
     getAllTeam,
     activeUserRemove,
     getActiveUsersForTeam,
-    teamNameUpdate
+    teamNameUpdate,
+    getAllUsers,
+    getAllTeamForSecrets
   };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../../src/commonComponents/Button";
 import { useForm } from "react-hook-form";
@@ -10,6 +10,10 @@ import HashLoader from "react-spinners/HashLoader";
 import axiosClient from "../axios-client";
 
 import OtpInput from "react-otp-input";
+import { useCookies } from "react-cookie";
+import Justification from "./Justfication";
+import SecreteCode from "./Login/SecretCode";
+import CryptoJS from "crypto-js";
 
 const Signin = () => {
   const {
@@ -29,7 +33,52 @@ const Signin = () => {
   const [errMessage, setErrMessage] = useState("");
   const [otpValue, setOtpValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const [justification, setJustification] = useState(false);
 
+  const [deviceID, setDeviceID] = useState("");
+
+  const [cookies, setCookie] = useCookies(["SecretPublicDeviceID"]);
+
+  console.log("dfhewyugf");
+
+  const generateUUID = () => {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+      /[xy]/g,
+      function (c) {
+        var r = (Math.random() * 16) | 0,
+          v = c === "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      }
+    );
+  };
+
+  const generateUniqueBrowserID = () => {
+    const userAgent = navigator.userAgent;
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+    const language = navigator.language;
+    const uniqueID =
+      userAgent + screenWidth + screenHeight + language + generateUUID();
+    return uniqueID;
+  };
+
+  const generateDeviceID = () => {
+    const id = cookies.ZirclyPublicDeviceID;
+    if (!id) {
+      const uniqueID = generateUniqueBrowserID();
+      const hashedID = CryptoJS.SHA256(uniqueID).toString(CryptoJS.enc.Hex);
+      setCookie("SecretPublicDeviceID", hashedID);
+      setDeviceID(hashedID);
+      return hashedID;
+    }
+    return id;
+  };
+
+  useEffect(() => {
+    if (!cookies.hasOwnProperty("SecretPublicDeviceID")) {
+      generateDeviceID();
+    }
+  }, []);
   // ----------------Handling form visibilty an hidden-------------------------------------
   const handleButton = () => {
     setAdminAccess(!adminAccess);
@@ -46,8 +95,12 @@ const Signin = () => {
 
   const handleSignin = (data) => {
     setLoading(true);
+    let payLoad = {
+      ...data,
+      device_id: cookies,
+    };
     axiosClient
-      .post("/api/auth/login", data)
+      .post("/api/auth/login", payLoad)
       .then((res) => {
         setOtps(true);
         setLoading(false);
@@ -56,6 +109,10 @@ const Signin = () => {
         const response = err.response;
         if (response && response?.status === 401) {
           setAdminAccess(true);
+          setLoading(false);
+        }
+        if (response && response?.status === 409) {
+          setJustification(true);
           setLoading(false);
         } else {
           console.error("Error:", response?.status);
@@ -230,7 +287,10 @@ const Signin = () => {
                 alt="Super Admin"
               />
               <div className="flex justify-center">
-                <form onSubmit={handleFormSubmit} className="w-72 flex justify-between">
+                <form
+                  onSubmit={handleFormSubmit}
+                  className="w-72 flex justify-between"
+                >
                   <div className="flex space-x-10">
                     <OtpInput
                       value={otp}
@@ -238,7 +298,7 @@ const Signin = () => {
                       onChange={handleOtpChange}
                       numInputs={4}
                       renderSeparator={<span>-</span>}
-                      renderInput={(props) => { 
+                      renderInput={(props) => {
                         return <input class="otp" {...props} />;
                       }}
                     />
@@ -264,16 +324,21 @@ const Signin = () => {
           </div>
         )}
         {loading && (
-            <>
-              <div className="bg-[#aeaeca] opacity-[0.5] w-[100%] h-[100vh] absolute top-0 left-0  z-10"></div>
-              <div className="">
-                <p className="absolute top-[48%] left-[48%] z-50 ">
-                  <HashLoader color="#3197e8" />
-                </p>
-              </div>
-            </>
-          )}
+          <>
+            <div className="bg-[#aeaeca] opacity-[0.5] w-[100%] h-[100vh] absolute top-0 left-0  z-10"></div>
+            <div className="">
+              <p className="absolute top-[48%] left-[48%] z-50 ">
+                <HashLoader color="#3197e8" />
+              </p>
+            </div>
+          </>
+        )}
       </div>
+      <Justification
+        justification={justification}
+        setJustification={setJustification}
+        cookies={cookies}
+      />
     </div>
   );
 };

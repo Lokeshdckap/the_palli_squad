@@ -170,16 +170,19 @@ const DeviceTable = ({ approvalDevice }) => {
       editable: false,
     },
     {
-      title: "DeviceIp",
+      title: "Device_ID",
       dataIndex: "device_ip",
       width: "15%",
       editable: false,
+      ellipsis: true, // Enable ellipsis for long content
+
     },
     {
       title: "Justification",
       dataIndex: "justification",
       width: "20%",
       editable: false,
+      ellipsis: true, // Enable ellipsis for long content
     },
 
     {

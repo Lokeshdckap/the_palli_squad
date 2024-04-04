@@ -107,7 +107,7 @@ export default function SecretStoreForm({
 
         const isPassword = formData.password?.trim() !== "";
 
-        if (!isPassword || !file) {
+        if (!isPassword || file == null ) {
           return toast.error("Need to store at least one secret");
         }
 
@@ -118,6 +118,7 @@ export default function SecretStoreForm({
         formDataToUpload.append("file", file);
         formDataToUpload.append("secretData", secretData);
         formDataToUpload.append("title", formData.title);
+        formDataToUpload.append("description", formData.description);
         formDataToUpload.append("username", formData.userName);
 
         axiosClient

@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Header } from "../../Header/Header";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axiosClient from "../../axios-client";
-import SecretTable from "../../commonComponents/SecretTable";
-import SecretStoreForm from "../../commonComponents/SecretStoreForm";
-
+import SecretTableTeams from "../../commonComponents/SecretTableTeams";
+import Crypto from "crypto-js";
 export const TeamSecretComponent = () => {
   const params = useParams();
-  const [secrets, setSecrets] = useState([]);
+  const [teamSecrets, setTeamSecrets] = useState([]);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,15 +15,21 @@ export const TeamSecretComponent = () => {
   const [decryptedAttachments, setDecryptedAttachments] = useState([]);
   const [decryptedFileType, setDecryptedFileType] = useState("");
   const [decryptedFileName, setDecryptedFileName] = useState("");
+  const [userList, setUserList] = useState([]);
+  const [teamList, setTeamList] = useState([]);
+  const [decryptedDescription, setDecryptedDescription] = useState("");
 
   const [closeStoreTab, setCloseStoreTab] = useState(false);
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const hash_id = queryParams.get("hash_id");
+  const naviagte = useNavigate();
 
   useEffect(() => {
-    getAllSecretsForUsers();
+    getShareWithTeams();
+    getAllUsers();
+    getAllTeamForSecrets();
     if (authUser) {
       getDecrypted();
     }
@@ -40,16 +45,51 @@ export const TeamSecretComponent = () => {
     setIsModalOpen(false);
   };
 
-  const getAllSecretsForUsers = () => {
+  const getShareWithTeams = () => {
     axiosClient
-      .get(`/api/secrets/getAllSecretsForUsers`)
+      .get(`/api/shares/getShareWithTeams`)
       .then((res) => {
-        setSecrets(res.data.data);
+        setTeamSecrets(res.data.data);
+        if (res.data.data && res.data.data.length > 0) {
+          naviagte(`/secrets/teamsecrets/?hash_id=${res?.data?.data[0]?.uuid}`);
+        }
       })
       .catch((err) => {
         console.log(err);
       });
   };
+
+  const getAllUsers = async () => {
+    try {
+      await axiosClient
+        .get(`/api/teams/getAllUsers`)
+        .then((res) => {
+          console.log(res.data);
+          setUserList(res.data.users);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const getAllTeamForSecrets = async () => {
+    try {
+      await axiosClient
+        .get(`/api/teams/getAllTeamForSecrets`)
+        .then((res) => {
+          setTeamList(res.data.teams);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   const handleInputChange = (e) => {
     const newPassword = e.target.value;
     setPassword(newPassword);
@@ -66,8 +106,19 @@ export const TeamSecretComponent = () => {
       return;
     }
 
+    const encryptPassword = (encryptData) => {
+      const secretKey = process.env.REACT_APP_SECRET_KEY;
+      const securePassword = Crypto.AES.encrypt(
+        encryptData,
+        secretKey
+      ).toString();
+      return securePassword;
+    };
+
+    const encryptSecret = encryptPassword(password);
+
     let payLoad = {
-      passPhrase: password,
+      passPhrase: encryptSecret,
     };
 
     axiosClient
@@ -92,6 +143,9 @@ export const TeamSecretComponent = () => {
             if (res.data.deryptionData) {
               setDecryptedData(res.data.deryptionData);
             }
+            if (res.data.decryptedDescription) {
+              setDecryptedDescription(res.data.decryptedDescription);
+            }
             if (res.data.file) {
               setDecryptedFileType(res.data.encryptedFileType);
               setDecryptedFileName(res.data.encryptedFileName);
@@ -110,8 +164,8 @@ export const TeamSecretComponent = () => {
   return (
     <>
       <div>
-        <SecretTable
-          secret={secrets}
+        <SecretTableTeams
+          secret={teamSecrets}
           setPassword={setPassword}
           password={password}
           handleInputChange={handleInputChange}
@@ -129,6 +183,10 @@ export const TeamSecretComponent = () => {
           decryptedAttachments={decryptedAttachments}
           decryptedFileType={decryptedFileType}
           decryptedFileName={decryptedFileName}
+          userList={userList}
+          teamList={teamList}
+          decryptedDescription={decryptedDescription}
+          getAllTeamForSecrets={getAllTeamForSecrets}
         />
       </div>
     </>

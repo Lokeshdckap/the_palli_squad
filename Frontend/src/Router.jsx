@@ -60,10 +60,10 @@ const router = createBrowserRouter([
         path: "/admin/pendingList",
         element: <Admin />,
       },
-      {
-        path: "/filePassword",
-        element: <FilePassword />,
-      },
+      // {
+      //   path: "/filePassword",
+      //   element: <FilePassword />,
+      // },
     ],
   },
 

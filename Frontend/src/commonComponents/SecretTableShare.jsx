@@ -20,6 +20,7 @@ import {
 } from "antd";
 import SetPassword from "../Auth/SetPassword";
 import { Link, useLocation, useParams } from "react-router-dom";
+import CountdownTimer from "./CountdownTimer";
 
 const { Option } = Select;
 
@@ -97,12 +98,15 @@ const SecretTableShare = ({
   decryptedFileType,
   decryptedFileName,
 }) => {
+  // console.log(secret);
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
   const [editingKey, setEditingKey] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showAPIKey, setShowAPIKey] = useState(false);
   const [showAttachments, setShowAttachments] = useState(false);
+
+  console.log(decryptedData, "fr3f3");
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -140,11 +144,13 @@ const SecretTableShare = ({
 
     switch (type) {
       case "password":
-        return record.showPassword && authUser ? decryptedData : maskedText;
+        return showPassword && authUser ? decryptedData : maskedText;
       // case "apiKey":
       //   return showAPIKey && authUser ? truncatedText : maskedText;
       case "attachments":
-        return showAttachments && authUser ? decryptedFileName : maskedText;
+        return showAttachments && authUser
+          ? decryptedFileName.slice(0, 5)
+          : maskedText;
       default:
         return truncatedText; // Default behavior if type is not recognized
     }
@@ -167,19 +173,6 @@ const SecretTableShare = ({
                 onClick={() => toggleVisibility("password", true, record)}
               />
             ));
-
-      // case "apiKey":
-      //   return showAPIKey && authUser ? (
-      //     <EyeOutlined
-      //       style={{ paddingLeft: "8px" }}
-      //       onClick={() => toggleVisibility("apiKey")}
-      //     />
-      //   ) : (
-      //     <EyeInvisibleOutlined
-      //       style={{ paddingLeft: "8px" }}
-      //       onClick={() => toggleVisibility("apiKey")}
-      //     />
-      //   );
 
       case "attachments":
         return showAttachments && authUser ? (
@@ -238,24 +231,6 @@ const SecretTableShare = ({
     return mimeTypeMap[extension] || "application/octet-stream";
   };
 
-  useEffect(() => {
-    updateData();
-  }, [secret]);
-
-  const updateData = () => {
-    const updatedData = secret.map((secrets) => ({
-      id: secrets.uuid,
-      key: secrets.uuid,
-      username: secrets.username,
-      title: secrets.title,
-      password: secrets.password,
-      attachments: secrets.encrypted_attachment_hex,
-      showPassword: false,
-    }));
-
-    setData(updatedData);
-  };
-
   const isEditing = (record) => record.key === editingKey;
 
   const edit = (record) => {
@@ -269,62 +244,6 @@ const SecretTableShare = ({
     setEditingKey("");
   };
 
-  const save = async (key) => {
-    try {
-      const row = await form.validateFields();
-      const newData = [...data];
-      const index = newData.findIndex((item) => key === item.key);
-
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-
-        const formData = new FormData();
-        formData.append(
-          "file",
-          newData[index]?.attachments?.file?.originFileObj
-        );
-        formData.append("api_key", row["api key"]);
-        formData.append("id", newData[index].id);
-        formData.append("secretData", newData[index].password);
-        formData.append("title", newData[index].title);
-        formData.append("username", newData[index].username);
-
-        axiosClient
-          .put("/api/secrets/update-secret-encryption", formData)
-          .then((response) => {
-            console.log(response);
-          })
-          .catch((error) => {});
-
-        setData(newData);
-        setEditingKey("");
-      } else {
-        // If index is -1, it means the key was not found, handle accordingly
-        console.error("Key not found in data array.");
-      }
-    } catch (errInfo) {
-      console.log("Validate Failed:", errInfo);
-    }
-  };
-
-  const remove = (key) => {
-    axiosClient
-      .delete(`/api/secrets/removeSecrets/${key}`)
-      .then((response) => {
-        setData(newData);
-        setEditingKey("");
-      })
-      .catch((error) => {
-        console.error("Error deleted data:", error);
-      });
-    const newData = data.filter((item) => item.key !== key);
-    setData(newData);
-  };
-
   const columns = [
     {
       title: "S.no",
@@ -335,15 +254,17 @@ const SecretTableShare = ({
     },
     {
       title: "Title",
-      dataIndex: "title",
+      dataIndex: "secret",
       width: "15%",
       editable: true,
+      render: (text, record) => <span>{text.title}</span>,
     },
     {
       title: "Username",
-      dataIndex: "username",
-      width: "15%",
+      dataIndex: "secret",
+      width: "12%",
       editable: true,
+      render: (text, record) => <span>{text.username}</span>,
     },
     {
       title: "Description",
@@ -359,14 +280,16 @@ const SecretTableShare = ({
     },
     {
       title: "Password",
-      dataIndex: "password",
-      width: "15%",
+      dataIndex: "secret",
+      width: "12%",
       editable: true,
       ellipsis: true, // Enable ellipsis for long content
       render: (text, record) => (
         <>
-          <span>{renderContent(text, "password", record)}</span>
-          <Link to={`/secrets/?hash_id=${record.id}`}>
+          <span>
+            {renderContent(text.encrypted_password, "password", record)}
+          </span>
+          <Link to={`/secrets/sharewithme/?hash_id=${record.secret_uuid}`}>
             {getIcon("password", record)}
           </Link>
         </>
@@ -375,70 +298,35 @@ const SecretTableShare = ({
 
     {
       title: "Attachments",
-      dataIndex: "attachments",
-      width: "15%",
+      dataIndex: "secret",
+      width: "10%",
       editable: true,
       ellipsis: true, // Enable ellipsis for long content
       render: (text, record) => (
-        <>
-          <span>{renderContent(text, "attachments")}</span>
-          <Link to={`/secrets/?hash_id=${record.id}`}>
-            {getIcon("attachments")}
-          </Link>
-        </>
+        console.log(text, "fjwroof"),
+        (
+          <>
+            <span>{renderContent(text.encrypted_fileName, "attachments")}</span>
+            <Link to={`/secrets/sharewithme/?hash_id=${record.secret_uuid}`}>
+              {getIcon("attachments")}
+            </Link>
+          </>
+        )
       ),
     },
 
     {
-      title: "Share",
-      dataIndex: "Share",
-      width: "10%",
-      //   render: (text) => (
-      //     <span>
-      //       {renderContent(text, "apiKey")}
-      //       {getIcon("apiKey")}
-      //     </span>
-      //   ),
-    },
-
-    {
-      title: "Operation",
-      dataIndex: "Operation",
-      width: "10%",
-
-      render: (_, record) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <span>
-            <Typography.Link onClick={() => save(record.key)}>
-              Save
-            </Typography.Link>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a style={{ paddingLeft: "10px" }}>Cancel</a>
-            </Popconfirm>
-          </span>
-        ) : (
-          <Typography.Link
-            disabled={editingKey !== ""}
-            onClick={() => edit(record)}
-          >
-            Edit
-          </Typography.Link>
-        );
-      },
+      title: "Shared by",
+      dataIndex: "sharedWithUser",
+      width: "15%",
+      editable: false, // Assuming this is not editable
+      render: (text, record) => <span>{record.sharedWithUser?.username}</span>,
     },
     {
-      title: "Remove",
-      dataIndex: "Remove",
-      width: "10%",
-      render: (_, record) => (
-        <Popconfirm
-          title="Sure to remove?"
-          onConfirm={() => remove(record.key)}
-        >
-          <a style={{ color: "red" }}>Remove</a>
-        </Popconfirm>
-      ),
+      title: "expiration_date",
+      dataIndex: "expiration_date",
+      width: "12%",
+      render: (text) => <CountdownTimer expirationDate={text} />,
     },
   ];
 
@@ -481,7 +369,7 @@ const SecretTableShare = ({
             },
           }}
           bordered
-          dataSource={data}
+          dataSource={secret}
           columns={mergedColumns}
           rowClassName="editable-row"
           pagination={{
