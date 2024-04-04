@@ -66,6 +66,9 @@ const EditableCell = ({
 };
 
 const TableComponent = ({ existUserList }) => {
+
+  console.log(existUserList,"fwrhufh")
+
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
   const [editingKey, setEditingKey] = useState("");

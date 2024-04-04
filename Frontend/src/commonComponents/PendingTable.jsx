@@ -181,7 +181,7 @@ const PendingTable = ({ existUserList }) => {
           defaultValue="Waiting for approval"
           record={record}
         />
-      ) : record.isApproved == 0 ? (
+      ) :record.isApproved == 0 ? (
         "Waiting for approval"
       ) : record.isApproved == 1 ? (
         "Approved"

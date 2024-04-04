@@ -1,32 +1,49 @@
-import React, { useState } from 'react';
-import { Button, Drawer, Radio, Space } from 'antd';
-const TeamDrawer = ({ placement , open,onClose,record}) => {
-//   const [open, setOpen] = useState(false);
+import React, { useState, useEffect } from "react";
+import { Button, Drawer, Radio, Space } from "antd";
+import TableUserComponent from "./TableUserComponent";
+import SecretStoreForm from "./SecretStoreForm";
+
+const TeamDrawer = ({ open, onClose, record,assignRole }) => {
+  const [secretForm, setSecretForm] = useState(false);
+
+  const handleOpen = () => {
+    setSecretForm(true);
+  };
 
   return (
     <>
       <Drawer
         title={record?.team_name}
-        placement={placement}
         width={700}
-        onClose={onClose}
+        onClose={() => {
+          onClose();
+        }}
         open={open}
         extra={
-          <Space>
-            {/* <Button onClick={onClose}>Cancel</Button>
-            <Button type="primary" onClick={onClose}>
-              OK
-            </Button> */}
-          </Space>
+          record.role_type !== 3 && (
+            <>
+              <Space>
+                {record.role_type !== 3 && (
+                  <>
+                    <Button onClick={() => handleOpen()}>Add Secrets</Button>
+                  </>
+                )}
+              </Space>
+            </>
+          )
         }
       >
-        <p>{record?.team_name}</p>
-        <p>{record?.created_at}</p>
-        <p>{record?.updated_at}</p>
-        <div>
-          
-        </div>
+           {<SecretStoreForm 
+         secretForm={secretForm}
+         setSecretForm={setSecretForm}
+      />}
+        <TableUserComponent
+        record={record}
+        assignRole={assignRole}
+         />
       </Drawer>
+   
+
     </>
   );
 };

@@ -77,7 +77,7 @@ const EditableCell = ({
   );
 };
 
-const SecretTable = ({
+const SecretTableTeams = ({
   secret,
   setPassword,
   password,
@@ -144,9 +144,7 @@ const SecretTable = ({
       // case "apiKey":
       //   return showAPIKey && authUser ? truncatedText : maskedText;
       case "attachments":
-        return showAttachments && authUser
-          ? decryptedFileName
-          : maskedText
+        return showAttachments && authUser ? decryptedFileName : maskedText;
       default:
         return truncatedText; // Default behavior if type is not recognized
     }
@@ -403,7 +401,6 @@ const SecretTable = ({
       //   ),
     },
 
-
     {
       title: "Operation",
       dataIndex: "Operation",
@@ -496,4 +493,4 @@ const SecretTable = ({
   );
 };
 
-export default SecretTable;
+export default SecretTableTeams;
