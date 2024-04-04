@@ -11,7 +11,6 @@ import { EmailVerificationCheck } from "./Auth/EmailVerificationCheck";
 import { Admin } from "./Admin/Admin";
 import { Teams } from "./Teams/Teams";
 import { Secrets } from "./Secret/Secrets";
-import FilePassword from "./Secret/FilePassword";
 import { JoinTeam } from "./joinTeam/JoinTeam";
 
 const router = createBrowserRouter([
