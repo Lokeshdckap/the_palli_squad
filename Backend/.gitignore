@@ -4,3 +4,4 @@ env
 config
 uploads
 .env
+package-lock.json
