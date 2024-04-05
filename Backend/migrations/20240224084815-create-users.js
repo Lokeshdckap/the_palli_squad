@@ -46,7 +46,7 @@ module.exports = {
       },
       device_ip: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       isApproved: {
         type: Sequelize.INTEGER,

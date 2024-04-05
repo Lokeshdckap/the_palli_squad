@@ -95,6 +95,7 @@ const SecretTableShare = ({
   setAuthUser,
   decryptedData,
   decryptedAttachments,
+  decryptedDescription,
   decryptedFileType,
   decryptedFileName,
 }) => {
@@ -104,6 +105,8 @@ const SecretTableShare = ({
   const [editingKey, setEditingKey] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showAPIKey, setShowAPIKey] = useState(false);
+  const [showDescription, setshowDescription] = useState("");
+
   const [showAttachments, setShowAttachments] = useState(false);
 
   console.log(decryptedData, "fr3f3");
@@ -131,6 +134,14 @@ const SecretTableShare = ({
         setShowAttachments(value);
         setIsModalOpen(value);
         break;
+      case "description":
+        if (value == false) {
+          setAuthUser(false);
+          setshowDescription("");
+        }
+        setshowDescription(record.key);
+        setIsModalOpen(value);
+        break;
       default:
         break;
     }
@@ -145,8 +156,10 @@ const SecretTableShare = ({
     switch (type) {
       case "password":
         return showPassword && authUser ? decryptedData : maskedText;
-      // case "apiKey":
-      //   return showAPIKey && authUser ? truncatedText : maskedText;
+      case "description":
+        return showDescription === record.key && authUser
+          ? decryptedDescription
+          : maskedText;
       case "attachments":
         return showAttachments && authUser
           ? decryptedFileName.slice(0, 5)
@@ -173,6 +186,24 @@ const SecretTableShare = ({
                 onClick={() => toggleVisibility("password", true, record)}
               />
             ));
+      case "description":
+        return showDescription === record.key && authUser
+          ? (console.log("Rendering EyeOutlined"),
+            (
+              <EyeOutlined
+                style={{ paddingLeft: "8px" }}
+                onClick={() => toggleVisibility("description", false, record)}
+              />
+            ))
+          : (console.log("Rendering EyeInvisibleOutlined"),
+            record.description ? (
+              <EyeInvisibleOutlined
+                style={{ paddingLeft: "8px" }}
+                onClick={() => toggleVisibility("description", true, record)}
+              />
+            ) : (
+              <>-</>
+            ));
 
       case "attachments":
         return showAttachments && authUser ? (
@@ -190,8 +221,8 @@ const SecretTableShare = ({
         return null;
     }
   };
-  async function downloadAttachments(value) {
-    toggleVisibility("attachments", value);
+  async function downloadAttachments(value,record) {
+    toggleVisibility("attachments", value,record);
 
     if (authUser) {
       const fileType = getFileType(decryptedFileType); // Extract file type from the file name
@@ -268,15 +299,17 @@ const SecretTableShare = ({
     },
     {
       title: "Description",
-      dataIndex: "Description",
+      dataIndex: "description",
       width: "15%",
-      editable: true,
-      //   render: (text) => (
-      //     <span>
-      //       {renderContent(text, "apiKey")}
-      //       {getIcon("apiKey")}
-      //     </span>
-      //   ),
+      ellipsis: true, // Enable ellipsis for long content
+      render: (text, record) => (
+        <>
+          <span>{renderContent(text, "description", record)}</span>
+          <Link to={`/secrets/sharewithme/?hash_id=${record.id}`}>
+            {getIcon("description", record)}
+          </Link>
+        </>
+      ),
     },
     {
       title: "Password",

@@ -16,7 +16,7 @@ export const ShareSecretComponent = () => {
   const [decryptedAttachments, setDecryptedAttachments] = useState([]);
   const [decryptedFileType, setDecryptedFileType] = useState("");
   const [decryptedFileName, setDecryptedFileName] = useState("");
-
+  const [decryptedDescription, setDecryptedDescription] = useState("");
   const [closeStoreTab, setCloseStoreTab] = useState(false);
 
   const location = useLocation();
@@ -106,6 +106,9 @@ export const ShareSecretComponent = () => {
            
               setDecryptedData(res.data.deryptionData);
             }
+            if(res.data.decryptedDescription){
+              setDecryptedDescription(res.data.decryptedDescription)
+            }
             if (res.data.file) {
               setDecryptedFileType(res.data.encryptedFileType);
               setDecryptedFileName(res.data.encryptedFileName);
@@ -143,6 +146,7 @@ export const ShareSecretComponent = () => {
             decryptedData={decryptedData}
             decryptedAttachments={decryptedAttachments}
             decryptedFileType={decryptedFileType}
+            decryptedDescription={decryptedDescription}
             decryptedFileName={decryptedFileName}
           />
         </div>

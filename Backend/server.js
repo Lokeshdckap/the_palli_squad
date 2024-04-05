@@ -8,6 +8,10 @@ const ShareUser = db.shares_users;
 
 const User = db.users;
 
+const uuid = require("uuid");
+
+const bcrypt = require('bcrypt');
+
 const { Op, where } = require("sequelize");
 
 const cron = require("node-cron");
@@ -126,35 +130,45 @@ cron.schedule("* * * * *", async () => {
 });
 
 
-// const creationAdmin = async () => {
-//   try {
-//     const existsadmin = await User.findAll({});
-//     if (existsRoles.length === 0) {
-//       await User.bulkCreate([
-//         { username: "Super Admin"
-          
-//        },
-//         { name: "collaborator" },
-//         { name: "viewer" },
-//       ])
-//         .then(() => {
-//           console.log("Default roles inserted successfully.");
-//         })
-//         .catch((error) => {
-//           console.error("Error inserting default roles:", error);
-//         });
-//     } else {
-//       console.log("Roles already exist.");
-//     }
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
 
-// creationAdmin();
+const creationAdmin = async () => {
+  try {
+    const existsAdmin = await User.findAll({ where: { email: "pallisquad@gmail.com" } });
+    if (existsAdmin.length === 0) {
+      await User.bulkCreate([
+        { 
+          uuid:uuid.v4(),
+          username: "Palli Squad",
+          email: "pallisquad@gmail.com",
+          password: await bcrypt.hash("Test@123", 15),
+          isApproved: 1,
+          role_type: 1,
+          isVerified: true,
+          createdAt : new Date(),
+          updated:new Date(),
+        }
+      ])
+      
+      .then(() => {
+        console.log("Default admin inserted successfully.");
+      })
+      .catch((error) => {
+        console.error("Error inserting default admin:", error);
+      });
+    } else {
+      console.log("Admin already exists.");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// Call the function to create the default admin
+creationAdmin();
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () =>
   console.log(`Serpassportver running server on port ${PORT}`)
 );
+

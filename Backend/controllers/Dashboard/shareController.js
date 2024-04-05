@@ -193,6 +193,11 @@ const getShareWithTeam = async (req, res) => {
           model: secrets,
           attributes: { exclude: ["createdAt", "updatedAt"] },
         },
+        {
+          model: User, // Include the users table
+          as: "sharedBy", // Alias for the joined users table
+          attributes: ["username"], // Include specific attributes from users
+        },
       ],
     });
     // Handling the result as a Promise

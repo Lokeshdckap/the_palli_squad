@@ -128,7 +128,7 @@ const TeamTableComponent = ({ teamList }) => {
           return (
             <Button
               type="primary"
-              className="bg-red-500"
+              // className="bg-red-500"
               disabled // Disable the button
             >
               Add User
@@ -138,7 +138,7 @@ const TeamTableComponent = ({ teamList }) => {
           return (
             <Button
               type="primary"
-              className="bg-red-500"
+              // className="bg-red-500"
               id="userAdd"
               onClick={() => {
                 handleOpenClose(record);

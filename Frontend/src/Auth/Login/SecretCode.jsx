@@ -5,9 +5,14 @@ import Crypto from "crypto-js";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axiosClient from "../../axios-client";
-export default function SecreteCode() {
+import { useNavigate } from "react-router-dom";
+import { useMyContext } from "../../context/AppContext";
+export default function SecreteCode({}) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const { userInfo, userDetail, checkSecret, setCheckSecret } = useMyContext();
+  const navigate = useNavigate();
+
   const handleInputChange = (e) => {
     const newPassword = e.target.value;
     setPassword(newPassword);
@@ -57,13 +62,13 @@ export default function SecreteCode() {
         passPhrase: encryptedPassword,
       };
       axiosClient
-        .post("/api/auth/passphrase", payLoad )
-        .then(({ res }) => {
-
-            console.log(res)
-        //   console.log(res);
-        //   setError("");
-        //   setPassword("");
+        .post("/api/auth/passphrase", payLoad)
+        .then((res) => {
+          if (res.status === 200) {
+            toast.success(res.data.msg)
+            setCheckSecret(true);
+            navigate("/teams");
+          }
         })
         .catch((error) => {
           console.log(error);

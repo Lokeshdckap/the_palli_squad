@@ -14,7 +14,7 @@ const getUserInfo = async (req, res) => {
 
   const checkSecretCode = await passPhrase.findOne({
     where: {
-      user_uuid: userInfo?.uuid,
+      user_uuid: req.user.id,
     },
   });
 
@@ -27,7 +27,6 @@ const getUserInfo = async (req, res) => {
     return res.status(404).json({ error: "No matching records found!" });
   }
 };
-
 
 
 module.exports = {

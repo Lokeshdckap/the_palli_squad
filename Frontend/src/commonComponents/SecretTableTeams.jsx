@@ -292,6 +292,7 @@ const SecretTableTeams = ({
       password: secrets.secret.encrypted_password,
       file: secrets.secret.encrypted_attachment,
       attachments: secrets.secret.encrypted_fileName,
+      sharedBy: secrets.sharedBy.username,
       role_type: secrets.userTeams[0]?.role_type,
     }));
 
@@ -421,11 +422,9 @@ const SecretTableTeams = ({
           setTimeValueTeam("");
           setVisible(false);
         }
-
       })
       .catch((err) => {
-
-        toast.error(err.response.data.Error );
+        toast.error(err.response.data.Error);
       });
   };
 
@@ -502,6 +501,14 @@ const SecretTableTeams = ({
           </>
         )
       ),
+    },
+    {
+      title: "Shared by",
+      dataIndex: "sharedBy",
+      width: "15%",
+      editable: false, // Assuming this is not editable
+
+      render: (text, record) => <span>{record.sharedBy}</span>,
     },
     {
       title: "Share",

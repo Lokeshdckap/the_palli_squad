@@ -14,7 +14,7 @@ const Dashboard = () => {
     if (checkSecret) {
       navigate("/teams");
     }
-  }, []);
+  }, [checkSecret]);
   return (
     <>
       {checkSecret ? (

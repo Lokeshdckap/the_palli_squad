@@ -177,7 +177,7 @@ export const MySecretComponent = () => {
             <div className="flex justify-between p-2">
               <p className="text-2xl">Secrets</p>
               <button
-                className="px-8 py-2 bg-red-600 rounded-md text-[16px] text-white"
+                className="px-8 py-2 bg-blue-600 rounded-md text-[16px] text-white"
                 onClick={() => {
                   setCloseStoreTab(true);
                 }}

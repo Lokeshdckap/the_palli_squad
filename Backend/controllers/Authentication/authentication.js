@@ -108,13 +108,15 @@ const login = async (req, res) => {
         });
       }
 
-      if (
-        user.device_ip != req.body.device_id.SecretPublicDeviceID &&
-        !unAuthor
-      ) {
-        return res.status(409).json({
-          msg: "unauthorized device logins",
-        });
+      if (user.role_type != 1) {
+        if (
+          user.device_ip != req.body.device_id.SecretPublicDeviceID &&
+          !unAuthor
+        ) {
+          return res.status(409).json({
+            msg: "unauthorized device logins",
+          });
+        }
       }
 
       //if user email is found, compare password with bcrypt
