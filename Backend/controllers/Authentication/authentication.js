@@ -20,7 +20,7 @@ const fast2sms = require("fast-two-sms");
 const axios = require("axios");
 const IP = require("ip");
 const { Op, where } = require("sequelize");
-
+require("dotenv").config();
 const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -59,7 +59,7 @@ const register = async (req, res) => {
       }).save();
 
       if (setToken) {
-        const link = `${process.env.FRONTEND_BASE_URL}email-verify/${user.uuid}/${setToken.token}`;
+        const link = `${process.env.FRONTEND_BASE_URL}/email-verify/${user.uuid}/${setToken.token}`;
 
         const emailTemplate = fs.readFileSync(
           path.join(__dirname, "../../", "public", "emailTemplates/index.html"),

@@ -38,7 +38,7 @@ app.use(passport.session());
 
 const path = require("path");
 
-app.use(cors({ origin: "http://localhost:3000", credentials: true })); // Local
+app.use(cors({ origin: process.env.FRONTEND_BASE_URL, credentials: true })); //server
 
 app.use(express.json());
 

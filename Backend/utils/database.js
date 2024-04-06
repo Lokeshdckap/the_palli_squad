@@ -1,9 +1,9 @@
 //importing modules
 
 const { Sequelize, DataTypes } = require("sequelize");
-
+require("dotenv").config();
 const sequelize = new Sequelize(
-  `postgres://dckap:admin@localhost:5432/secret_manager`,
+  `postgres://${process.env.username}:${process.env.password}@${process.env.host}:5432/${process.env.database}`,
   { dialect: "postgres" }
 ); // Local
 

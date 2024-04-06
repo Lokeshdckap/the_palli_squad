@@ -57,7 +57,7 @@ const inviteUsers = async (req, res) => {
       });
 
       // Construct the invitation link
-      const link = `http://localhost:3000/join/${inviteToken}`;
+      const link = `${process.env.FRONTEND_BASE_URL}/join/${inviteToken}`;
 
       // Read the email template
       const emailTemplate = fs.readFileSync(
